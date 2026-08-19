@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 135" width="100%" height="100%">
+  <!-- Lion Capital of Ashoka Official Outline Representation -->
+  <g fill="#171A21">
+    <!-- Center Lion Head -->
+    <path d="M50 4 C44 4 40 8 38 13 C35 12 32 14 31 17 C30 20 31 24 32 26 C30 28 29 32 30 35 C31 40 34 44 38 47 C42 50 46 53 50 56 C54 53 58 50 62 47 C66 44 69 40 70 35 C71 32 70 28 68 26 C69 24 70 20 69 17 C68 14 65 12 62 13 C60 8 56 4 50 4 Z"/>
+    
+    <!-- Eyes and Facial details -->
+    <circle cx="44" cy="20" r="2.2" fill="#ffffff"/>
+    <circle cx="56" cy="20" r="2.2" fill="#ffffff"/>
+    <circle cx="44" cy="20" r="1.2" fill="#171A21"/>
+    <circle cx="56" cy="20" r="1.2" fill="#171A21"/>
+    <path d="M47 25 Q50 27 53 25" stroke="#ffffff" stroke-width="1.2" fill="none"/>
+    <path d="M43 30 Q50 35 57 30" stroke="#ffffff" stroke-width="1.8" fill="none"/>
+    
+    <!-- Left Profile Lion -->
+    <path d="M34 20 C29 19 24 22 21 26 C18 31 17 37 19 42 C21 47 25 52 30 55 C34 58 38 60 41 61 C38 55 36 49 35 43 C33 35 33 27 34 20 Z"/>
+    <circle cx="25" cy="30" r="1.8" fill="#ffffff"/>
+    <circle cx="25" cy="30" r="0.9" fill="#171A21"/>
+
+    <!-- Right Profile Lion -->
+    <path d="M66 20 C71 19 76 22 79 26 C82 31 83 37 81 42 C79 47 75 52 70 55 C66 58 62 60 59 61 C62 55 64 49 65 43 C67 35 67 27 66 20 Z"/>
+    <circle cx="75" cy="30" r="1.8" fill="#ffffff"/>
+    <circle cx="75" cy="30" r="0.9" fill="#171A21"/>
+
+    <!-- Lion Mane and Chest -->
+    <path d="M38 46 Q50 54 62 46 L60 66 Q50 73 40 66 Z"/>
+    
+    <!-- Front Legs -->
+    <path d="M37 63 L35 86 L42 86 L43 65 Z M57 65 L58 86 L65 86 L63 63 Z"/>
+    
+    <!-- Platform / Abacus -->
+    <rect x="14" y="86" width="72" height="16" rx="2.5"/>
+    
+    <!-- Ashoka Chakra in Center of Abacus -->
+    <circle cx="50" cy="94" r="6" fill="#ffffff"/>
+    <circle cx="50" cy="94" r="4.8" fill="#171A21"/>
+    <circle cx="50" cy="94" r="1.2" fill="#ffffff"/>
+    <line x1="50" y1="89" x2="50" y2="99" stroke="#ffffff" stroke-width="0.7"/>
+    <line x1="45" y1="94" x2="55" y2="94" stroke="#ffffff" stroke-width="0.7"/>
+    <line x1="46.5" y1="90.5" x2="53.5" y2="97.5" stroke="#ffffff" stroke-width="0.7"/>
+    <line x1="46.5" y1="97.5" x2="53.5" y2="90.5" stroke="#ffffff" stroke-width="0.7"/>
+
+    <!-- Left Bull / Horse representation -->
+    <circle cx="28" cy="94" r="3" fill="#ffffff"/>
+    <circle cx="28" cy="94" r="1.8" fill="#171A21"/>
+
+    <!-- Right Elephant / Lion representation -->
+    <circle cx="72" cy="94" r="3" fill="#ffffff"/>
+    <circle cx="72" cy="94" r="1.8" fill="#171A21"/>
+
+    <!-- Inverted Lotus Base / Bottom Rim -->
+    <path d="M20 102 Q50 106 80 102 L77 107 Q50 110 23 107 Z"/>
+
+    <!-- National Motto: "सत्यमेव जयते" (Satyameva Jayate) -->
+    <text x="50" y="123" text-anchor="middle" font-size="10" font-weight="900" font-family="'Inter', 'Noto Sans Devanagari', 'Mangal', 'Arial', sans-serif" letter-spacing="1">सत्यमेव जयते</text>
+  </g>
+</svg>
