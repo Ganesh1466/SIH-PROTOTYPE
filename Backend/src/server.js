@@ -19,7 +19,18 @@ dotenv.config();
 
 const app = express();
 
-// Security & Parsing Middlewares
+// 1. Completely disable HTTP ETag generation to prevent 304 responses
+app.disable('etag');
+
+// 2. Global No-Cache Middleware (Ensure fresh HTTP 200 data for all clients/proxies)
+app.use((req, res, next) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  next();
+});
+
+// 3. Security & CORS Configuration
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:3000",
