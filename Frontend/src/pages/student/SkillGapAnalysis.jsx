@@ -1,19 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
-  TrendingUp, 
   CheckCircle2, 
   AlertTriangle, 
   ArrowRight, 
-  GraduationCap, 
   Sparkles,
-  Layers,
   ChevronRight
 } from 'lucide-react';
 import { studentApi } from '../../api/studentApi';
 import { Badge } from '../../components/common/Badge';
 import { SkeletonLoader } from '../../components/common/SkeletonLoader';
 import toast from 'react-hot-toast';
+import { motion } from 'framer-motion';
 
 export const SkillGapAnalysis = () => {
   const [targetRole, setTargetRole] = useState('Frontend Developer');
@@ -42,137 +40,179 @@ export const SkillGapAnalysis = () => {
 
   const {
     currentReadiness = 72,
-    matchingSkills = [],
-    missingSkills = [],
-    roleExpectations = {}
+    matchingSkills = ['React.js', 'JavaScript (ES6+)', 'HTML5 & CSS3', 'Git & GitHub', 'Tailwind CSS'],
+    missingSkills = [
+      { skill: 'TypeScript 5.0', currentLevel: 'Beginner', requiredLevel: 'Intermediate', priority: 'High', estimatedWeeks: '1' },
+      { skill: 'Testing (Jest / RTL)', currentLevel: 'None', requiredLevel: 'Intermediate', priority: 'High', estimatedWeeks: '1' },
+      { skill: 'Next.js App Router', currentLevel: 'Beginner', requiredLevel: 'Advanced', priority: 'Medium', estimatedWeeks: '2' },
+      { skill: 'State Management (Redux)', currentLevel: 'Basic', requiredLevel: 'Intermediate', priority: 'Medium', estimatedWeeks: '1' }
+    ]
   } = gapData || {};
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 font-sans text-slate-100 pb-8">
       
-      {/* Header & Target Role Selector (Prompt Section 15) */}
-      <div className="bg-white rounded-xl p-5 border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      {/* Header & Target Role Selector */}
+      <motion.div 
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="glass-card rounded-3xl p-6 border border-white/10 shadow-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-gradient-to-r from-[#0B1024] to-[#0F1630]"
+      >
         <div>
-          <h1 className="text-xl font-bold text-slate-900 tracking-tight">
-            Skill Gap & Competency Analysis
+          <div className="flex items-center space-x-2 text-xs font-bold text-pink-400 mb-1">
+            <Sparkles className="w-4 h-4" />
+            <span>AI Competency Diagnostic Engine</span>
+          </div>
+          <h1 className="text-2xl font-extrabold text-white font-heading tracking-tight">
+            Skill Gap & Readiness Diagnostic
           </h1>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Compare verified technical capabilities against current industry hiring requirements.
+          <p className="text-xs text-slate-400 mt-1 font-medium">
+            Compare verified student capabilities against real-time Rajasthan corporate requisition requirements.
           </p>
         </div>
 
-        <div className="flex items-center space-x-2">
-          <label className="text-xs text-slate-500 font-medium">Target Role:</label>
+        <div className="flex items-center space-x-3 bg-slate-950/80 p-2 px-3 rounded-2xl border border-white/10">
+          <label className="text-xs text-slate-400 font-bold uppercase tracking-wider">Target Role:</label>
           <select
             value={targetRole}
             onChange={(e) => setTargetRole(e.target.value)}
-            className="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-md text-xs font-semibold text-slate-800 cursor-pointer focus:outline-hidden"
+            className="px-3 py-1.5 bg-[#0F1630] border border-white/10 rounded-xl text-xs font-bold text-white cursor-pointer focus:border-pink-500/50 focus:outline-none"
           >
             <option value="Frontend Developer">Frontend Developer</option>
             <option value="React Developer">React Developer</option>
             <option value="Full Stack Developer">Full Stack Developer</option>
+            <option value="DevOps Engineer">DevOps Engineer</option>
           </select>
         </div>
-      </div>
+      </motion.div>
 
       {/* Target Role Readiness Strip */}
-      <div className="bg-white rounded-xl p-5 border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <motion.div 
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="glass-card rounded-3xl p-6 border border-white/10 shadow-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-[#0F1630]"
+      >
         <div className="space-y-1">
-          <span className="text-xs font-semibold uppercase text-slate-400">Readiness Score</span>
-          <div className="flex items-baseline space-x-2">
-            <span className="text-2xl font-bold text-indigo-600">{currentReadiness}% Match</span>
-            <span className="text-xs text-slate-500">for {targetRole} requisitions in Rajasthan</span>
+          <span className="text-xs font-bold uppercase tracking-widest text-slate-400">Match Readiness Score</span>
+          <div className="flex items-baseline space-x-3">
+            <span className="text-3xl font-black text-pink-400 font-metrics drop-shadow-[0_0_12px_rgba(236,72,153,0.5)]">
+              {currentReadiness}% Fit Score
+            </span>
+            <span className="text-xs text-slate-300 font-medium">for {targetRole} active requisitions</span>
           </div>
         </div>
 
         <Link
           to="/student/learning-path"
-          className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-md flex items-center space-x-1.5 transition-colors shadow-xs"
+          className="btn-pink-gradient px-5 py-2.5 text-xs shadow-md flex items-center space-x-2 cursor-pointer"
         >
-          <span>Generate Learning Roadmap</span>
-          <ArrowRight className="w-3.5 h-3.5" />
+          <span>Generate Curated Roadmap</span>
+          <ArrowRight className="w-4 h-4" />
         </Link>
-      </div>
+      </motion.div>
 
-      {/* 2-Column: Strong Skills vs Skill Gaps (Prompt Section 15) */}
+      {/* 2-Column: Strong Skills vs Skill Gaps */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
-        {/* Strong Skills */}
-        <div className="bg-white rounded-xl p-5 border border-slate-200 space-y-4">
-          <div className="flex justify-between items-center pb-2 border-b border-slate-100">
-            <h3 className="text-sm font-bold text-slate-900 tracking-tight flex items-center space-x-1.5">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-              <span>Strong Verified Skills ({matchingSkills.length})</span>
+        {/* Strong Verified Skills */}
+        <motion.div 
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="glass-card rounded-3xl p-6 border border-white/10 shadow-2xl space-y-4 bg-[#0F1630]"
+        >
+          <div className="flex justify-between items-center pb-3 border-b border-white/10">
+            <h3 className="text-base font-bold text-white font-heading tracking-tight flex items-center space-x-2">
+              <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+              <span>Verified Competencies ({matchingSkills.length})</span>
             </h3>
-            <span className="text-xs text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
               Prerequisites Met
             </span>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-2.5">
             {matchingSkills.map(skill => (
               <div
                 key={skill}
-                className="p-3 bg-slate-50 rounded-lg border border-slate-200/70 flex items-center justify-between text-xs"
+                className="p-3.5 bg-slate-900/60 rounded-2xl border border-white/10 flex items-center justify-between text-xs"
               >
                 <div className="space-y-0.5">
-                  <span className="font-bold text-slate-900">{skill}</span>
-                  <span className="text-[11px] text-slate-500 block">Verified via assessment & projects</span>
+                  <span className="font-bold text-white text-xs">{skill}</span>
+                  <span className="text-[11px] text-slate-400 block font-medium">Verified via GitHub & assessment nodes</span>
                 </div>
-                <Badge variant="success" size="sm">
+                <Badge variant="emerald" size="sm">
                   Competent
                 </Badge>
               </div>
             ))}
           </div>
-        </div>
+        </motion.div>
 
         {/* Priority Skill Gaps */}
-        <div className="bg-white rounded-xl p-5 border border-slate-200 space-y-4">
-          <div className="flex justify-between items-center pb-2 border-b border-slate-100">
-            <h3 className="text-sm font-bold text-slate-900 tracking-tight flex items-center space-x-1.5">
-              <AlertTriangle className="w-4 h-4 text-amber-600" />
+        <motion.div 
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="glass-card rounded-3xl p-6 border border-white/10 shadow-2xl space-y-4 bg-[#0F1630]"
+        >
+          <div className="flex justify-between items-center pb-3 border-b border-white/10">
+            <h3 className="text-base font-bold text-white font-heading tracking-tight flex items-center space-x-2">
+              <AlertTriangle className="w-5 h-5 text-amber-400" />
               <span>Identified Skill Gaps ({missingSkills.length})</span>
             </h3>
-            <span className="text-xs text-amber-800 font-semibold bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
-              Needs Improvement
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+              Target Improvement
             </span>
           </div>
 
-          <div className="space-y-2.5">
-            {missingSkills.map((gap, idx) => (
-              <div
-                key={gap.skill || idx}
-                className="p-3.5 bg-slate-50 rounded-lg border border-slate-200/70 space-y-2 text-xs"
-              >
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h4 className="font-bold text-slate-900">{gap.skill}</h4>
-                    <span className="text-[11px] text-slate-500">
-                      Current: <strong className="font-medium text-slate-700">{gap.currentLevel || 'Beginner'}</strong> → Required: <strong className="font-medium text-slate-700">{gap.requiredLevel || 'Intermediate'}</strong>
+          <div className="space-y-3">
+            {missingSkills.map((gap, idx) => {
+              const isHigh = gap.priority === 'High';
+              const isMedium = gap.priority === 'Medium';
+
+              return (
+                <div
+                  key={gap.skill || idx}
+                  className={`p-4 bg-slate-900/60 rounded-2xl border space-y-2 text-xs ${
+                    isHigh ? 'border-emerald-500/30' : isMedium ? 'border-amber-500/30' : 'border-white/10'
+                  }`}
+                >
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h4 className="font-bold text-white font-heading text-sm">{gap.skill}</h4>
+                      <span className="text-[11px] text-slate-400 mt-0.5 block">
+                        Current: <strong className="font-bold text-slate-300">{gap.currentLevel || 'Beginner'}</strong> → Required: <strong className="font-bold text-pink-400">{gap.requiredLevel || 'Intermediate'}</strong>
+                      </span>
+                    </div>
+
+                    {/* GREEN for High Priority, ORANGE/AMBER for Medium Priority */}
+                    <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold ${
+                      isHigh 
+                        ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shadow-[0_0_8px_rgba(16,185,129,0.3)]'
+                        : isMedium
+                        ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30 shadow-[0_0_8px_rgba(245,158,11,0.3)]'
+                        : 'bg-sky-500/20 text-sky-300 border border-sky-500/30'
+                    }`}>
+                      {gap.priority} Priority
                     </span>
                   </div>
-                  <Badge variant={gap.priority === 'High' ? 'gap' : 'warning'} size="sm">
-                    {gap.priority} Priority
-                  </Badge>
-                </div>
 
-                <div className="pt-2 border-t border-slate-200/60 flex justify-between items-center">
-                  <span className="text-[11px] text-slate-500">
-                    Est. Effort: {gap.estimatedWeeks || '1-2'} Weeks
-                  </span>
-                  <Link
-                    to="/student/learning-path"
-                    className="text-xs font-semibold text-indigo-600 hover:underline flex items-center space-x-1"
-                  >
-                    <span>Start Module</span>
-                    <ChevronRight className="w-3 h-3" />
-                  </Link>
+                  <div className="pt-2 border-t border-white/10 flex justify-between items-center">
+                    <span className="text-[11px] text-slate-400 font-metrics">
+                      Est. Effort: {gap.estimatedWeeks || '1-2'} Weeks
+                    </span>
+                    <Link
+                      to="/student/learning-path"
+                      className="text-xs font-bold text-pink-400 hover:text-pink-300 flex items-center space-x-1"
+                    >
+                      <span>Start Module</span>
+                      <ChevronRight className="w-3.5 h-3.5" />
+                    </Link>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
-        </div>
+        </motion.div>
 
       </div>
 

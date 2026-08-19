@@ -1,10 +1,7 @@
 import React from 'react';
 import { 
-  BarChart3, 
-  TrendingUp, 
-  Users, 
-  CheckCircle2, 
-  Download
+  Download,
+  Sparkles
 } from 'lucide-react';
 import { 
   AreaChart,
@@ -17,6 +14,7 @@ import {
   Legend
 } from 'recharts';
 import toast from 'react-hot-toast';
+import { motion } from 'framer-motion';
 
 const MONTHLY_TREND = [
   { month: 'Jan', applications: 42, shortlisted: 9, interviews: 4, joined: 1 },
@@ -31,79 +29,89 @@ const MONTHLY_TREND = [
 
 export const EmployerReports = () => {
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 font-sans text-slate-100 pb-8">
       
       {/* Header */}
-      <div className="bg-white rounded-xl p-5 border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <motion.div 
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-[#0B1730] rounded-3xl p-6 border border-blue-900/40 shadow-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-gradient-to-r from-[#0B1730] via-[#0E1E40] to-[#0B1730]"
+      >
         <div>
-          <h1 className="text-xl font-bold text-slate-900 tracking-tight">
+          <h1 className="text-2xl font-extrabold text-white font-heading tracking-tight">
             Recruiter Analytics & Hiring Funnel
           </h1>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-xs text-slate-400 mt-1 font-medium">
             Recruitment conversion efficiency and candidate sourcing performance.
           </p>
         </div>
 
         <button
           onClick={() => toast.success("Exported recruitment summary spreadsheet (CSV)")}
-          className="px-3.5 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-semibold rounded-md border border-slate-200 flex items-center space-x-1.5 transition-colors cursor-pointer"
+          className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 text-xs font-bold rounded-xl shadow-[0_0_15px_rgba(59,130,246,0.4)] flex items-center space-x-2 cursor-pointer shrink-0 transition-all"
         >
           <Download className="w-3.5 h-3.5" />
           <span>Export CSV</span>
         </button>
-      </div>
+      </motion.div>
 
       {/* Hiring Trend Curve */}
-      <div className="bg-white rounded-xl p-5 border border-slate-200 space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-slate-100">
+      <motion.div 
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="bg-[#0B1730] rounded-3xl p-6 border border-blue-900/40 shadow-2xl space-y-4"
+      >
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-blue-900/40">
           <div>
-            <h3 className="text-sm font-bold text-slate-900 tracking-tight">
-              Monthly Hiring Performance
+            <h3 className="text-base font-bold text-white font-heading tracking-tight flex items-center space-x-2">
+              <Sparkles className="w-4 h-4 text-blue-400" />
+              <span>Monthly Hiring Performance</span>
             </h3>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <p className="text-xs text-slate-400 mt-0.5">
               Candidate movement across the recruitment pipeline over the current cycle.
             </p>
           </div>
-          <div className="flex items-center gap-3 text-[11px] font-semibold text-slate-500">
-            <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-sky-500" />Applications</span>
-            <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-indigo-500" />Interviews</span>
-            <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-emerald-500" />Joined</span>
+          <div className="flex items-center gap-3 text-xs font-semibold text-slate-400">
+            <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.6)]" />Applications</span>
+            <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-indigo-500" />Interviews</span>
+            <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-emerald-400" />Joined</span>
           </div>
         </div>
 
-        <div className="w-full min-h-[280px] h-[280px] sm:h-[320px] relative">
-          <ResponsiveContainer width="100%" height={280} minHeight={260}>
+        <div className="w-full min-h-[300px] h-[300px] sm:h-[340px] relative">
+          <ResponsiveContainer width="100%" height={300} minHeight={280}>
             <AreaChart data={MONTHLY_TREND} margin={{ top: 12, right: 12, left: -18, bottom: 0 }}>
               <defs>
                 <linearGradient id="employerApplicationsGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#0284c7" stopOpacity={0.24} />
-                  <stop offset="95%" stopColor="#0284c7" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.35} />
+                  <stop offset="95%" stopColor="#3B82F6" stopOpacity={0} />
                 </linearGradient>
                 <linearGradient id="employerInterviewsGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#6366f1" stopOpacity={0.2} />
-                  <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#6366F1" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#6366F1" stopOpacity={0} />
                 </linearGradient>
                 <linearGradient id="employerJoinedGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#10b981" stopOpacity={0.22} />
-                  <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#10B981" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
-              <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#64748b' }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 11, fill: '#64748b' }} axisLine={false} tickLine={false} width={34} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" vertical={false} />
+              <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#94A3B8' }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 11, fill: '#94A3B8' }} axisLine={false} tickLine={false} width={34} />
               <Tooltip
-                contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', borderRadius: '8px', color: '#fff', fontSize: '11px' }}
-                labelStyle={{ color: '#cbd5e1', fontWeight: 700, marginBottom: 4 }}
+                contentStyle={{ backgroundColor: '#0B1730', borderColor: 'rgba(59,130,246,0.3)', borderRadius: '12px', color: '#F8FAFC', fontSize: '11px', boxShadow: '0 10px 25px rgba(0,0,0,0.5)' }}
+                labelStyle={{ color: '#60A5FA', fontWeight: 700, marginBottom: 4 }}
               />
               <Legend verticalAlign="top" align="right" wrapperStyle={{ fontSize: '11px', paddingBottom: '12px' }} />
-              <Area type="monotone" dataKey="applications" name="Applications" stroke="#0284c7" fill="url(#employerApplicationsGradient)" strokeWidth={2.5} dot={{ r: 2.5, fill: '#0284c7' }} activeDot={{ r: 5 }} />
-              <Area type="monotone" dataKey="shortlisted" name="Shortlisted" stroke="#0ea5e9" fill="none" strokeWidth={2} strokeDasharray="5 4" dot={false} />
-              <Area type="monotone" dataKey="interviews" name="Interviews" stroke="#6366f1" fill="url(#employerInterviewsGradient)" strokeWidth={2.5} dot={{ r: 2.5, fill: '#6366f1' }} activeDot={{ r: 5 }} />
-              <Area type="monotone" dataKey="joined" name="Joined" stroke="#10b981" fill="url(#employerJoinedGradient)" strokeWidth={2.5} dot={{ r: 2.5, fill: '#10b981' }} activeDot={{ r: 5 }} />
+              <Area type="monotone" dataKey="applications" name="Applications" stroke="#3B82F6" fill="url(#employerApplicationsGradient)" strokeWidth={2.5} dot={{ r: 3, fill: '#3B82F6' }} activeDot={{ r: 6 }} />
+              <Area type="monotone" dataKey="shortlisted" name="Shortlisted" stroke="#60A5FA" fill="none" strokeWidth={2} strokeDasharray="5 4" dot={false} />
+              <Area type="monotone" dataKey="interviews" name="Interviews" stroke="#6366F1" fill="url(#employerInterviewsGradient)" strokeWidth={2.5} dot={{ r: 3, fill: '#6366F1' }} activeDot={{ r: 6 }} />
+              <Area type="monotone" dataKey="joined" name="Joined" stroke="#10B981" fill="url(#employerJoinedGradient)" strokeWidth={2.5} dot={{ r: 3, fill: '#10B981' }} activeDot={{ r: 6 }} />
             </AreaChart>
           </ResponsiveContainer>
         </div>
-      </div>
+      </motion.div>
 
     </div>
   );

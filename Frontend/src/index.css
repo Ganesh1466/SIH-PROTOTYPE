@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Manrope:wght@600;700;800&family=Sora:wght@600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Manrope:wght@600;700;800&family=Sora:wght@600;700;800&family=Space+Grotesk:wght@500;600;700;800&display=swap');
 @import "tailwindcss";
 
 @layer base {
@@ -11,8 +11,8 @@
   
   html, body {
     font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    color: #171a21;
-    background-color: #f7f8fa;
+    color: #F8FAFC;
+    background-color: #050816;
     min-height: 100vh;
     width: 100%;
     max-width: 100vw;
@@ -32,19 +32,20 @@
     display: flex;
     flex-direction: column;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    color: #171a21;
+    color: #F8FAFC;
+    background-color: #050816;
   }
 
-  /* Headings: Sora (Bold 600-700, Modern SaaS standard) */
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Sora', 'Inter', system-ui, sans-serif !important;
+  /* Headings: Space Grotesk / Sora (Bold 600-800, Premium Tech feel) */
+  h1, h2, h3, h4, h5, h6, .font-heading {
+    font-family: 'Space Grotesk', 'Sora', 'Inter', system-ui, sans-serif !important;
     font-weight: 700;
-    color: #0f172a;
+    color: #F8FAFC;
     letter-spacing: -0.025em;
-    line-height: 1.35;
+    line-height: 1.3;
   }
 
-  /* Body text: Inter (400-500 weight) */
+  /* Body text: Inter */
   p, span, a, label, td, th {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     letter-spacing: -0.011em;
@@ -61,89 +62,104 @@
     font-weight: 600;
   }
 
-  /* Font size scale adjustments to prevent tiny text anywhere */
-  .text-xs {
-    font-size: 0.82rem !important;
-    line-height: 1.3rem !important;
-  }
-
-  .text-sm {
-    font-size: 0.94rem !important;
-    line-height: 1.45rem !important;
-  }
-
-  .text-base {
-    font-size: 1.05rem !important;
-    line-height: 1.6rem !important;
-  }
-
-  .text-lg {
-    font-size: 1.2rem !important;
-    line-height: 1.65rem !important;
-  }
-
-  .text-xl {
-    font-size: 1.38rem !important;
-    line-height: 1.75rem !important;
-  }
-
-  .text-2xl {
-    font-size: 1.7rem !important;
-    line-height: 2rem !important;
-  }
-
-  /* Numbers & Metrics: Manrope / Tabular figures for sharp dashboards */
-  .text-2xl, .text-3xl, .text-4xl, .text-5xl, .stat-number, [data-stat] {
-    font-family: 'Manrope', 'Inter', system-ui, sans-serif;
+  /* Numbers & Metrics: Space Grotesk & Manrope tabular figures */
+  .stat-number, [data-stat], .font-metrics {
+    font-family: 'Space Grotesk', 'Manrope', system-ui, sans-serif !important;
     font-feature-settings: "tnum" 1;
     font-variant-numeric: tabular-nums;
   }
 }
 
-/* Subtle modern scrollbar */
+/* Glassmorphic & Premium Card Utilities */
+.glass-card {
+  background: rgba(15, 22, 48, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1rem;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.glass-card:hover {
+  border-color: rgba(236, 72, 153, 0.35);
+  box-shadow: 0 10px 30px -10px rgba(236, 72, 153, 0.15), 0 0 20px -5px rgba(59, 130, 246, 0.15);
+}
+
+.glass-card-elevated {
+  background: rgba(18, 26, 56, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 1rem;
+}
+
+/* Refined & Elegant Primary Buttons (Softened Pink/Rose Gradient) */
+.btn-pink-gradient {
+  background: linear-gradient(135deg, #BE185D 0%, #D946EF 100%);
+  color: #FFFFFF;
+  font-weight: 700;
+  border-radius: 0.75rem;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 14px rgba(190, 24, 93, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.btn-pink-gradient:hover {
+  transform: translateY(-1.5px);
+  box-shadow: 0 6px 18px rgba(190, 24, 93, 0.35);
+  filter: brightness(1.06);
+}
+
+.btn-pink-gradient:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.btn-pink-outline {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #F8FAFC;
+  font-weight: 600;
+  border-radius: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.btn-pink-outline:hover {
+  background: rgba(236, 72, 153, 0.12);
+  border-color: rgba(236, 72, 153, 0.35);
+  color: #F8FAFC;
+  box-shadow: 0 0 12px rgba(236, 72, 153, 0.15);
+}
+
+/* Glow Utilities */
+.glow-pink {
+  box-shadow: 0 0 25px rgba(236, 72, 153, 0.3);
+}
+
+.glow-blue {
+  box-shadow: 0 0 25px rgba(59, 130, 246, 0.25);
+}
+
+.ambient-glow-bg {
+  background: radial-gradient(circle at 50% 0%, rgba(236, 72, 153, 0.12) 0%, rgba(59, 130, 246, 0.08) 35%, transparent 70%);
+}
+
+/* Sleek Dark Scrollbar */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: #070B1A;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 4px;
+  background: #1E293B;
+  border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
-}
-
-/* Clean utility borders & cards */
-.ui-card {
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 0.75rem;
-}
-
-.ui-card-subtle {
-  background-color: #f8fafc;
-  border: 1px solid #f1f5f9;
-  border-radius: 0.5rem;
-}
-
-/* Spacious enterprise requisition editor sections */
-.job-requisition-form > div {
-  padding: 2rem;
-  border-color: #dbeafe;
-  border-radius: 1rem;
-  box-shadow: 0 12px 32px rgba(37, 99, 235, 0.06);
-}
-
-@media (max-width: 640px) {
-  .job-requisition-form > div {
-    padding: 1.25rem;
-  }
+  background: #EC4899;
 }
 
 /* Mobile Utilities & Smooth Touch Scrolling */
@@ -156,21 +172,19 @@
   -webkit-overflow-scrolling: touch;
 }
 
-/* Responsive Table Wrapper Touch Support */
 .overflow-x-auto {
   -webkit-overflow-scrolling: touch;
   max-width: 100%;
 }
 
-/* Mobile-Friendly Word Wrap & Container Constraints */
 .break-words-safe {
   overflow-wrap: break-word;
   word-break: break-word;
 }
 
-/* Recharts responsive fix for small screens */
+/* Recharts styling for dark mode */
 .recharts-responsive-container {
-  min-height: 180px;
+  min-height: 200px;
   width: 100% !important;
   max-width: 100% !important;
 }
@@ -179,10 +193,20 @@
   overflow: visible;
 }
 
-/* Safe touch target size for mobile buttons */
-@media (max-width: 640px) {
-  button, a.btn-touch {
-    min-height: 38px;
-  }
+.recharts-default-tooltip {
+  background-color: #0F1630 !important;
+  border: 1px solid rgba(236, 72, 153, 0.3) !important;
+  border-radius: 0.75rem !important;
+  color: #F8FAFC !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5) !important;
 }
 
+.recharts-cartesian-grid line {
+  stroke: rgba(255, 255, 255, 0.06);
+}
+
+.recharts-text {
+  fill: #94A3B8;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+}

@@ -53,3 +53,16 @@ export const getStudentSkillGap = (req, res) => {
   const result = SkillGapService.analyzeSkillGap(student, role || "Frontend Developer");
   res.json({ success: true, data: result });
 };
+
+export const getStudentLearningPlan = (req, res) => {
+  const { id } = req.params;
+  const { role } = req.query;
+  res.json({
+    success: true,
+    data: {
+      studentId: id,
+      targetRole: role || "Frontend Developer",
+      status: "ACTIVE"
+    }
+  });
+};

@@ -7,7 +7,6 @@ import {
   Briefcase, 
   Sliders, 
   CheckCircle2, 
-  Circle,
   Eye
 } from 'lucide-react';
 
@@ -68,7 +67,7 @@ export const ProfileCompletion = ({ activeStep, setActiveStep, profileData }) =>
   ];
 
   return (
-    <div className="bg-white rounded-xl p-3 sm:p-4 border border-[#E7E9EE] shadow-2xs">
+    <div className="glass-card rounded-2xl p-3 sm:p-4 border border-white/10 shadow-xl bg-[#0F1630]">
       <div className="flex items-center overflow-x-auto no-scrollbar gap-2 pb-1 scroll-smooth">
         {steps.map((step) => {
           const Icon = step.icon;
@@ -79,18 +78,18 @@ export const ProfileCompletion = ({ activeStep, setActiveStep, profileData }) =>
               key={step.id}
               type="button"
               onClick={() => setActiveStep(step.id)}
-              className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+              className={`flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
                 isActive
-                  ? 'bg-indigo-600 text-white shadow-xs'
+                  ? 'bg-gradient-to-r from-pink-500/25 to-fuchsia-500/25 text-white border border-pink-500/40 shadow-[0_0_12px_rgba(236,72,153,0.3)] font-extrabold'
                   : step.isComplete
-                  ? 'bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200'
-                  : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200/80'
+                  ? 'bg-slate-900/80 text-emerald-300 border border-emerald-500/30 hover:bg-slate-800'
+                  : 'bg-slate-900/60 text-slate-400 border border-white/10 hover:text-white'
               }`}
             >
               {step.isComplete && !isActive ? (
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
               ) : (
-                <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-slate-400'} shrink-0`} />
+                <Icon className={`w-4 h-4 ${isActive ? 'text-pink-400' : 'text-slate-400'} shrink-0`} />
               )}
               <span>0{step.id} {step.title}</span>
             </button>

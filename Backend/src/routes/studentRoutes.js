@@ -4,7 +4,8 @@ import {
   getStudentById, 
   updateStudentProfile, 
   getStudentRecommendations,
-  getStudentSkillGap 
+  getStudentSkillGap,
+  getStudentLearningPlan
 } from '../controllers/studentController.js';
 
 const router = express.Router();
@@ -14,5 +15,6 @@ router.get('/:id', getStudentById);
 router.put('/:id', updateStudentProfile);
 router.get('/:id/recommendations', getStudentRecommendations);
 router.get('/:id/skill-gap', getStudentSkillGap);
+router.get('/:id/learning-plan', getStudentLearningPlan);
 
 export default router;

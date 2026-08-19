@@ -1,14 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { 
   Send, 
   Clock, 
   CheckCircle2, 
-  Calendar, 
-  ExternalLink, 
-  ChevronRight,
-  Filter,
-  Sparkles
+  Sparkles,
+  ChevronRight
 } from 'lucide-react';
 import { applicationApi } from '../../api/applicationApi';
 import { Badge } from '../../components/common/Badge';
@@ -16,6 +12,7 @@ import { ApplicationStatusModal } from '../../components/common/ApplicationStatu
 import { SkeletonLoader } from '../../components/common/SkeletonLoader';
 import { EmptyState } from '../../components/common/EmptyState';
 import toast from 'react-hot-toast';
+import { motion } from 'framer-motion';
 
 export const ApplicationsTracker = () => {
   const [applications, setApplications] = useState([]);
@@ -53,7 +50,7 @@ export const ApplicationsTracker = () => {
     switch (status) {
       case 'APPLIED': return 'default';
       case 'UNDER_REVIEW': return 'blue';
-      case 'SHORTLISTED': return 'strong';
+      case 'SHORTLISTED': return 'pink';
       case 'INTERVIEW_SCHEDULED': return 'purple';
       case 'SELECTED': return 'success';
       case 'JOINED': return 'excellent';
@@ -62,25 +59,29 @@ export const ApplicationsTracker = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 font-sans text-slate-100 pb-8">
       
       {/* Header */}
-      <div className="bg-white rounded-xl p-5 border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <motion.div 
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="glass-card rounded-3xl p-6 border border-white/10 shadow-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-gradient-to-r from-[#0B1024] to-[#0F1630]"
+      >
         <div>
-          <h1 className="text-xl font-bold text-slate-900 tracking-tight">
+          <h1 className="text-2xl font-extrabold text-white font-heading tracking-tight">
             Application Pipeline
           </h1>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-xs text-slate-400 mt-1">
             Real-time status progression from initial submission to shortlist and final joining.
           </p>
         </div>
 
         <div className="flex items-center space-x-2">
-          <label className="text-xs text-slate-500 font-medium">Stage:</label>
+          <label className="text-xs text-slate-400 font-medium">Stage:</label>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-md text-xs font-semibold text-slate-800 cursor-pointer focus:outline-hidden"
+            className="px-3.5 py-2 bg-[#0F1630] border border-white/10 text-slate-300 rounded-xl text-xs font-semibold focus:outline-none cursor-pointer"
           >
             <option value="ALL">All Stages ({applications.length})</option>
             <option value="APPLIED">Applied</option>
@@ -89,7 +90,7 @@ export const ApplicationsTracker = () => {
             <option value="SELECTED">Selected</option>
           </select>
         </div>
-      </div>
+      </motion.div>
 
       {/* Applications Data Table */}
       {filtered.length === 0 ? (
@@ -100,19 +101,23 @@ export const ApplicationsTracker = () => {
           onAction={() => window.location.href = '/student/jobs'}
         />
       ) : (
-        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+        <motion.div 
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="glass-card rounded-3xl border border-white/10 overflow-hidden shadow-2xl"
+        >
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold uppercase text-[10px] tracking-wider">
+              <thead className="bg-slate-900/80 border-b border-white/10 text-slate-400 font-bold uppercase text-[10px] tracking-wider">
                 <tr>
-                  <th className="py-3 px-5">Role & Company</th>
-                  <th className="py-3 px-4">Applied On</th>
-                  <th className="py-3 px-4">Match Fit</th>
-                  <th className="py-3 px-4">Current Stage</th>
-                  <th className="py-3 px-5 text-right">Shortlist Status</th>
+                  <th className="py-4 px-5">Role & Company</th>
+                  <th className="py-4 px-4">Applied On</th>
+                  <th className="py-4 px-4">Match Fit</th>
+                  <th className="py-4 px-4">Current Stage</th>
+                  <th className="py-4 px-5 text-right">Shortlist Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-white/5">
                 {filtered.map(app => (
                   <tr 
                     key={app.id} 
@@ -120,26 +125,26 @@ export const ApplicationsTracker = () => {
                       setSelectedApp(app);
                       setModalOpen(true);
                     }}
-                    className="hover:bg-indigo-50/40 transition-colors cursor-pointer"
+                    className="hover:bg-white/5 transition-colors cursor-pointer"
                   >
-                    <td className="py-3.5 px-5">
-                      <div className="font-bold text-slate-900 text-sm hover:text-indigo-600 transition-colors">
+                    <td className="py-4 px-5">
+                      <div className="font-bold text-white text-sm hover:text-pink-300 font-heading transition-colors">
                         {app.jobTitle}
                       </div>
-                      <span className="text-xs text-slate-500 font-medium">{app.companyName}</span>
+                      <span className="text-xs text-slate-400 font-medium">{app.companyName}</span>
                     </td>
                     
-                    <td className="py-3.5 px-4 text-slate-500">
+                    <td className="py-4 px-4 text-slate-400 font-medium">
                       {new Date(app.appliedDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                     </td>
 
-                    <td className="py-3.5 px-4">
-                      <Badge variant={app.matchScore >= 80 ? 'strong' : 'warning'} size="sm">
+                    <td className="py-4 px-4">
+                      <Badge variant={app.matchScore >= 80 ? 'pink' : 'warning'} size="sm">
                         {app.matchScore}% Fit
                       </Badge>
                     </td>
 
-                    <td className="py-3.5 px-4">
+                    <td className="py-4 px-4">
                       <button 
                         onClick={(e) => {
                           e.stopPropagation();
@@ -154,16 +159,16 @@ export const ApplicationsTracker = () => {
                       </button>
                     </td>
 
-                    <td className="py-3.5 px-5 text-right">
+                    <td className="py-4 px-5 text-right">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           setSelectedApp(app);
                           setModalOpen(true);
                         }}
-                        className="px-3 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold rounded-md border border-indigo-200 transition-colors inline-flex items-center space-x-1 text-xs cursor-pointer shadow-2xs"
+                        className="btn-pink-outline px-3.5 py-1.5 inline-flex items-center space-x-1 text-xs cursor-pointer"
                       >
-                        <Sparkles className="w-3 h-3 text-indigo-600" />
+                        <Sparkles className="w-3 h-3 text-pink-400" />
                         <span>View Shortlist →</span>
                       </button>
                     </td>
@@ -172,7 +177,7 @@ export const ApplicationsTracker = () => {
               </tbody>
             </table>
           </div>
-        </div>
+        </motion.div>
       )}
 
       {/* Application Status & Shortlist Pipeline Modal */}
@@ -185,4 +190,3 @@ export const ApplicationsTracker = () => {
     </div>
   );
 };
-

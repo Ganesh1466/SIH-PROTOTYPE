@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sliders, MapPin, Briefcase, Check, Building } from 'lucide-react';
+import { Sliders, Check } from 'lucide-react';
 
 const AVAILABLE_ROLES = [
   'Frontend Developer', 'React Developer', 'Backend Developer', 
@@ -13,8 +13,8 @@ const AVAILABLE_LOCATIONS = [
 ];
 
 export const CareerPreferences = ({ data = {}, onChange, errors = {} }) => {
-  const preferredRoles = data.preferred_roles || [];
-  const preferredLocations = data.preferred_locations || [];
+  const preferredRoles = data.preferred_roles || ['Frontend Developer', 'React Developer'];
+  const preferredLocations = data.preferred_locations || ['Jaipur', 'Remote / Work From Home'];
 
   const toggleRole = (role) => {
     const exists = preferredRoles.includes(role);
@@ -37,13 +37,13 @@ export const CareerPreferences = ({ data = {}, onChange, errors = {} }) => {
   };
 
   return (
-    <div className="bg-white rounded-xl p-6 border border-[#E7E9EE] shadow-2xs space-y-6">
-      <div className="border-b border-slate-100 pb-3">
-        <h3 className="text-base font-bold text-slate-900 tracking-tight flex items-center space-x-2">
-          <Sliders className="w-5 h-5 text-indigo-600" />
+    <div className="glass-card rounded-3xl p-6 border border-white/10 shadow-2xl space-y-6 bg-[#0F1630]">
+      <div className="border-b border-white/10 pb-3">
+        <h3 className="text-base font-bold text-white font-heading tracking-tight flex items-center space-x-2">
+          <Sliders className="w-5 h-5 text-pink-400" />
           <span>Section 06 — Career Preferences & Placement Criteria</span>
         </h3>
-        <p className="text-xs text-slate-500 mt-0.5">
+        <p className="text-xs text-slate-400 mt-1 font-medium">
           Specify your target domains and geographic availability across Rajasthan.
         </p>
       </div>
@@ -52,10 +52,10 @@ export const CareerPreferences = ({ data = {}, onChange, errors = {} }) => {
         
         {/* Preferred Job Roles */}
         <div className="space-y-2">
-          <label className="block text-slate-700 uppercase tracking-wider">
-            Target Job Roles (Select all that apply) <span className="text-rose-500">*</span>
+          <label className="block text-slate-300 uppercase tracking-wider">
+            Target Job Roles (Select all that apply) <span className="text-pink-400">*</span>
           </label>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
             {AVAILABLE_ROLES.map((role) => {
               const isSelected = preferredRoles.includes(role);
               return (
@@ -63,27 +63,26 @@ export const CareerPreferences = ({ data = {}, onChange, errors = {} }) => {
                   key={role}
                   type="button"
                   onClick={() => toggleRole(role)}
-                  className={`p-2.5 rounded-lg border text-left flex items-center justify-between transition-all cursor-pointer ${
+                  className={`p-3 rounded-2xl border text-left flex items-center justify-between transition-all cursor-pointer ${
                     isSelected
-                      ? 'bg-indigo-50 border-indigo-300 text-indigo-900 font-bold shadow-2xs'
-                      : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
+                      ? 'bg-gradient-to-r from-pink-500/25 to-fuchsia-500/25 text-white font-extrabold border-pink-500/50 shadow-[0_0_15px_rgba(236,72,153,0.3)]'
+                      : 'bg-slate-900/80 border-white/10 text-slate-400 hover:text-white hover:bg-slate-800'
                   }`}
                 >
                   <span className="truncate">{role}</span>
-                  {isSelected && <Check className="w-4 h-4 text-indigo-600 shrink-0 ml-1" />}
+                  {isSelected && <Check className="w-4 h-4 text-pink-400 shrink-0 ml-1" />}
                 </button>
               );
             })}
           </div>
-          {errors.preferred_roles && <p className="text-[11px] text-rose-600 font-medium">{errors.preferred_roles}</p>}
         </div>
 
         {/* Preferred Locations */}
-        <div className="space-y-2 pt-2 border-t border-slate-100">
-          <label className="block text-slate-700 uppercase tracking-wider">
-            Preferred Job Locations in Rajasthan <span className="text-rose-500">*</span>
+        <div className="space-y-2 pt-3 border-t border-white/10">
+          <label className="block text-slate-300 uppercase tracking-wider">
+            Preferred Job Locations in Rajasthan <span className="text-pink-400">*</span>
           </label>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
             {AVAILABLE_LOCATIONS.map((loc) => {
               const isSelected = preferredLocations.includes(loc);
               return (
@@ -91,64 +90,69 @@ export const CareerPreferences = ({ data = {}, onChange, errors = {} }) => {
                   key={loc}
                   type="button"
                   onClick={() => toggleLocation(loc)}
-                  className={`p-2.5 rounded-lg border text-left flex items-center justify-between transition-all cursor-pointer ${
+                  className={`p-3 rounded-2xl border text-left flex items-center justify-between transition-all cursor-pointer ${
                     isSelected
-                      ? 'bg-emerald-50 border-emerald-300 text-emerald-900 font-bold shadow-2xs'
-                      : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
+                      ? 'bg-emerald-500/20 text-emerald-300 font-extrabold border-emerald-500/40 shadow-[0_0_15px_rgba(16,185,129,0.3)]'
+                      : 'bg-slate-900/80 border-white/10 text-slate-400 hover:text-white hover:bg-slate-800'
                   }`}
                 >
                   <span className="truncate">{loc}</span>
-                  {isSelected && <Check className="w-4 h-4 text-emerald-600 shrink-0 ml-1" />}
+                  {isSelected && <Check className="w-4 h-4 text-emerald-400 shrink-0 ml-1" />}
                 </button>
               );
             })}
           </div>
-          {errors.preferred_locations && <p className="text-[11px] text-rose-600 font-medium">{errors.preferred_locations}</p>}
         </div>
 
         {/* Work Mode & Opportunity Preference */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-100">
-          <div className="space-y-1.5">
-            <label className="block text-slate-700 uppercase tracking-wider">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-3 border-t border-white/10">
+          <div className="space-y-2">
+            <label className="block text-slate-300 uppercase tracking-wider">
               Preferred Work Mode
             </label>
             <div className="grid grid-cols-3 gap-2">
-              {['On-site', 'Hybrid', 'Remote'].map((mode) => (
-                <button
-                  key={mode}
-                  type="button"
-                  onClick={() => handleSelect('work_mode', mode)}
-                  className={`py-2 px-3 rounded-lg border text-center font-bold text-xs transition-all cursor-pointer ${
-                    data.work_mode === mode
-                      ? 'bg-indigo-600 text-white shadow-2xs'
-                      : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
-                  }`}
-                >
-                  {mode}
-                </button>
-              ))}
+              {['On-site', 'Hybrid', 'Remote'].map((mode) => {
+                const isSelected = (data.work_mode || 'Hybrid') === mode;
+                return (
+                  <button
+                    key={mode}
+                    type="button"
+                    onClick={() => handleSelect('work_mode', mode)}
+                    className={`py-2.5 px-3 rounded-xl border text-center font-extrabold text-xs transition-all cursor-pointer ${
+                      isSelected
+                        ? 'btn-pink-gradient text-white shadow-md'
+                        : 'bg-slate-900/80 border-white/10 text-slate-400 hover:text-white hover:bg-slate-800'
+                    }`}
+                  >
+                    {mode}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
-          <div className="space-y-1.5">
-            <label className="block text-slate-700 uppercase tracking-wider">
-              Opportunity Preference <span className="text-rose-500">*</span>
+          <div className="space-y-2">
+            <label className="block text-slate-300 uppercase tracking-wider">
+              Opportunity Preference
             </label>
             <div className="grid grid-cols-3 gap-2">
-              {['Internship', 'Full Time', 'Both'].map((opp) => (
-                <button
-                  key={opp}
-                  type="button"
-                  onClick={() => handleSelect('opportunity_type', opp)}
-                  className={`py-2 px-3 rounded-lg border text-center font-bold text-xs transition-all cursor-pointer ${
-                    data.opportunity_type === opp
-                      ? 'bg-indigo-600 text-white shadow-2xs'
-                      : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
-                  }`}
-                >
-                  {opp}
-                </button>
-              ))}
+              {['Internship', 'Full Time', 'Both'].map((opp) => {
+                const isSelected = (data.opportunity_type || 'Both') === opp;
+                return (
+                  <button
+                    key={opp}
+                    type="button"
+                    onClick={() => handleSelect('opportunity_type', opp)}
+                    className={`py-2.5 px-3 rounded-xl border text-center font-extrabold text-xs transition-all cursor-pointer ${
+                      isSelected
+                        ? 'btn-pink-gradient text-white shadow-md'
+                        : 'bg-slate-900/80 border-white/10 text-slate-400 hover:text-white hover:bg-slate-800'
+                    }`}
+                  >
+                    {opp}
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>

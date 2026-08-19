@@ -6,7 +6,6 @@ import {
   CheckCircle2,
   ChevronRight,
   CircleDot,
-  Clock3,
   FileText,
   Plus,
   Send,
@@ -17,30 +16,27 @@ import {
 } from 'lucide-react';
 import { employerApi } from '../../api/employerApi';
 import { SkeletonLoader } from '../../components/common/SkeletonLoader';
+import { MatchGauge } from '../../components/common/MatchGauge';
+import { Badge } from '../../components/common/Badge';
 import toast from 'react-hot-toast';
+import { motion } from 'framer-motion';
 
 const FALLBACK_CANDIDATES = [
   { id: 'c-2', name: 'Priya Singh', college: 'MNIT Jaipur', matchScore: 96, matchedSkillsCount: 5, totalRequiredSkills: 5, cgpa: 9.1, projectsCount: 1 },
-  { id: 'c-1', name: 'Rahul Sharma', college: 'Rajasthan Technical University (RTU), Kota', matchScore: 83, matchedSkillsCount: 5, totalRequiredSkills: 5, cgpa: 8.4, projectsCount: 3 },
-  { id: 'c-5', name: 'Neha Meena', college: 'CTAE Udaipur', matchScore: 81, matchedSkillsCount: 5, totalRequiredSkills: 5, cgpa: 8.2, projectsCount: 1 },
-  { id: 'c-4', name: 'Karan Joshi', college: 'MBM University, Jodhpur', matchScore: 50, matchedSkillsCount: 2, totalRequiredSkills: 5, cgpa: 8.7, projectsCount: 1 }
+  { id: 'c-1', name: 'Rahul Sharma', college: 'Rajasthan Technical University (RTU), Kota', matchScore: 88, matchedSkillsCount: 5, totalRequiredSkills: 5, cgpa: 8.4, projectsCount: 3 },
+  { id: 'c-5', name: 'Neha Meena', college: 'CTAE Udaipur', matchScore: 82, matchedSkillsCount: 4, totalRequiredSkills: 5, cgpa: 8.2, projectsCount: 1 },
+  { id: 'c-4', name: 'Karan Joshi', college: 'MBM University, Jodhpur', matchScore: 74, matchedSkillsCount: 3, totalRequiredSkills: 5, cgpa: 8.7, projectsCount: 1 }
 ];
 
 const STAT_CONFIG = [
-  { key: 'activeJobs', label: 'Active jobs', icon: BriefcaseBusiness, trend: '+2 this month', accent: 'text-blue-700', iconBg: 'bg-blue-50' },
-  { key: 'totalApplicants', label: 'Applications', icon: FileText, trend: '+18.4% this week', accent: 'text-cyan-700', iconBg: 'bg-cyan-50' },
-  { key: 'shortlisted', label: 'Shortlisted', icon: Users, trend: '+6 this week', accent: 'text-indigo-700', iconBg: 'bg-indigo-50' },
-  { key: 'interviewsScheduled', label: 'Interviews', icon: Video, trend: '3 today', accent: 'text-violet-700', iconBg: 'bg-violet-50' },
-  { key: 'offersExtended', label: 'Offers', icon: Send, trend: '92% accepted', accent: 'text-emerald-700', iconBg: 'bg-emerald-50' }
+  { key: 'activeJobs', label: 'Active Jobs', icon: BriefcaseBusiness, trend: '+2 this month', accent: 'text-blue-400', border: 'border-blue-500/30' },
+  { key: 'totalApplicants', label: 'Applications', icon: FileText, trend: '+18.4% this week', accent: 'text-cyan-400', border: 'border-cyan-500/30' },
+  { key: 'shortlisted', label: 'Shortlisted', icon: Users, trend: '+6 this week', accent: 'text-indigo-400', border: 'border-indigo-500/30' },
+  { key: 'interviewsScheduled', label: 'Interviews', icon: Video, trend: '3 today', accent: 'text-blue-300', border: 'border-blue-400/30' },
+  { key: 'offersExtended', label: 'Offers', icon: Send, trend: '92% accepted', accent: 'text-emerald-400', border: 'border-emerald-500/30' }
 ];
 
 const getInitials = (name = '') => name.split(' ').map((part) => part[0]).join('').slice(0, 2).toUpperCase();
-
-const getMatchTone = (score) => {
-  if (score >= 90) return { text: 'text-emerald-700', bar: 'bg-emerald-500', track: 'bg-emerald-100' };
-  if (score >= 70) return { text: 'text-blue-700', bar: 'bg-blue-500', track: 'bg-blue-100' };
-  return { text: 'text-amber-700', bar: 'bg-amber-500', track: 'bg-amber-100' };
-};
 
 export const EmployerDashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
@@ -64,92 +60,193 @@ export const EmployerDashboard = () => {
     offersExtended: 3
   };
   const candidates = dashboardData?.topCandidates?.length ? dashboardData.topCandidates : FALLBACK_CANDIDATES;
-  const pipelineProgress = Math.min(100, Math.round((metrics.shortlisted / metrics.totalApplicants) * 100));
+
+  const hiringPipelineStages = [
+    { label: 'Applications', count: metrics.totalApplicants, pct: '100%', color: 'from-blue-600 to-blue-400' },
+    { label: 'Screening', count: 74, pct: '58%', color: 'from-blue-500 to-indigo-500' },
+    { label: 'Shortlisted', count: metrics.shortlisted, pct: '14%', color: 'from-indigo-500 to-violet-500' },
+    { label: 'Interview', count: metrics.interviewsScheduled, pct: '6%', color: 'from-violet-500 to-sky-500' },
+    { label: 'Offer', count: metrics.offersExtended, pct: '2.4%', color: 'from-emerald-500 to-teal-500' },
+  ];
 
   return (
-    <div className="space-y-5 text-[#10233f]">
-      <section className="relative overflow-hidden rounded-2xl border border-blue-100 bg-white px-5 py-5 shadow-[0_16px_40px_rgba(37,99,235,0.08)] sm:px-7 sm:py-6">
-        <div className="pointer-events-none absolute -right-16 -top-24 h-64 w-64 rounded-full bg-blue-100/70 blur-3xl" />
-        <div className="relative flex flex-col justify-between gap-5 md:flex-row md:items-center">
+    <div className="space-y-6 text-slate-100 pb-8 font-sans">
+      
+      {/* 1. Header Banner */}
+      <motion.section 
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="relative overflow-hidden rounded-3xl p-6 sm:p-7 border border-blue-900/40 shadow-2xl bg-gradient-to-r from-[#0B1730] via-[#0E1E40] to-[#0B1730]"
+      >
+        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
+        <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-5">
           <div>
             <div className="mb-2 flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-emerald-700">
-                <CircleDot className="h-3 w-3" /> Recruitment active
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/15 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-300">
+                <CircleDot className="h-3 w-3 text-emerald-400" /> Recruitment Active
               </span>
-              <span className="text-[11px] text-slate-400">Last synced just now</span>
+              <span className="text-[11px] text-slate-400 font-medium">Last synced real-time</span>
             </div>
-            <h2 className="text-xl font-bold tracking-tight text-[#10233f] sm:text-2xl">Good morning, {company.name || 'TechNova Solutions'}</h2>
-            <p className="mt-1 text-xs text-slate-500 sm:text-sm">Your hiring pipeline at a glance. Four requisitions are currently moving through review.</p>
+            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white font-heading">
+              Good morning, {company.name || 'TechNova Solutions'}
+            </h2>
+            <p className="mt-1 text-xs sm:text-sm text-slate-300 max-w-xl">
+              Recruitment Intelligence Dashboard. Four active requisitions moving through AI screening.
+            </p>
           </div>
-          <Link to="/employer/post" className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-xs font-bold text-white shadow-lg shadow-blue-500/20 transition-all hover:-translate-y-0.5 hover:bg-blue-700">
-            <Plus className="h-4 w-4" /> Post new requisition
+          <Link 
+            to="/employer/post" 
+            className="bg-blue-600 hover:bg-blue-500 text-white px-5 py-3 text-xs sm:text-sm font-bold rounded-2xl shadow-[0_0_20px_rgba(59,130,246,0.4)] transition-all flex items-center gap-2 shrink-0 cursor-pointer"
+          >
+            <Plus className="h-4 w-4" /> Post New Requisition
           </Link>
         </div>
-      </section>
+      </motion.section>
 
-      <section className="grid grid-cols-2 gap-3 lg:grid-cols-5">
-        {STAT_CONFIG.map((stat) => {
+      {/* 2. Compact Statistics Cards */}
+      <section className="grid grid-cols-2 gap-3.5 lg:grid-cols-5">
+        {STAT_CONFIG.map((stat, idx) => {
           const Icon = stat.icon;
           return (
-            <div key={stat.key} className="group rounded-xl border border-blue-100 bg-white p-4 shadow-[0_8px_24px_rgba(37,99,235,0.05)] transition-all duration-200 hover:-translate-y-0.5 hover:border-blue-300 hover:shadow-[0_12px_28px_rgba(37,99,235,0.1)]">
+            <motion.div 
+              key={stat.key}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: idx * 0.08, duration: 0.4 }}
+              className={`bg-[#0B1730] rounded-2xl p-4.5 border ${stat.border} space-y-2 hover:translate-y-[-3px] hover:border-blue-500/50 transition-all shadow-xl`}
+            >
               <div className="flex items-start justify-between gap-2">
-                <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-500">{stat.label}</span>
-                <span className={`rounded-lg p-2 ${stat.iconBg}`}><Icon className={`h-4 w-4 ${stat.accent}`} /></span>
+                <span className="text-[11px] font-bold uppercase tracking-widest text-slate-400">{stat.label}</span>
+                <span className="p-2 rounded-xl bg-blue-950/60 border border-blue-800/30"><Icon className={`h-4 w-4 ${stat.accent}`} /></span>
               </div>
-              <div className="mt-3 text-2xl font-bold tabular-nums text-[#10233f]">{metrics[stat.key] ?? 0}</div>
-              <div className={`mt-1 flex items-center gap-1 text-[11px] font-semibold ${stat.accent}`}><TrendingUp className="h-3 w-3" />{stat.trend}</div>
-            </div>
+              <div className="text-3xl font-extrabold tabular-nums text-white font-metrics tracking-tight">{metrics[stat.key] ?? 0}</div>
+              <div className={`flex items-center gap-1 text-[11px] font-bold ${stat.accent}`}>
+                <TrendingUp className="h-3 w-3" />
+                <span>{stat.trend}</span>
+              </div>
+            </motion.div>
           );
         })}
       </section>
 
-      <section className="grid gap-5 xl:grid-cols-[minmax(0,1.4fr)_minmax(320px,0.6fr)]">
-        <div className="rounded-2xl border border-blue-100 bg-white p-5 shadow-[0_8px_24px_rgba(37,99,235,0.05)] sm:p-6">
-          <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
-            <div>
-              <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.16em] text-sky-300"><Sparkles className="h-3.5 w-3.5" /> Priority requisition</div>
-              <h3 className="mt-2 text-lg font-bold text-[#10233f]">React Developer</h3>
-              <p className="mt-1 text-xs text-slate-500">Jaipur HQ · ₹6.5–8.5 LPA · Full-time · 4 openings</p>
-            </div>
-            <span className="inline-flex items-center gap-1.5 self-start rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-[10px] font-bold text-amber-700"><Clock3 className="h-3 w-3" /> In review</span>
+      {/* 3. Hiring Pipeline Stages Visualization */}
+      <motion.section
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="bg-[#0B1730] rounded-3xl p-6 border border-blue-900/40 shadow-2xl space-y-4"
+      >
+        <div className="flex justify-between items-center">
+          <div>
+            <h3 className="text-base font-bold text-white font-heading tracking-tight flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-blue-400" />
+              <span>Hiring Pipeline Stage Breakdown</span>
+            </h3>
+            <p className="text-xs text-slate-400">Visual candidate progression across current open requisitions</p>
           </div>
-          <div className="mt-6 grid gap-5 sm:grid-cols-[1fr_auto] sm:items-end">
-            <div>
-              <div className="mb-2 flex items-center justify-between text-xs"><span className="font-semibold text-slate-700">126 applicants in pipeline</span><span className="text-slate-500">{pipelineProgress}% shortlisted</span></div>
-              <div className="h-2 overflow-hidden rounded-full bg-blue-50"><div className="h-full rounded-full bg-gradient-to-r from-blue-600 to-cyan-400 transition-all duration-700" style={{ width: `${Math.max(pipelineProgress, 8)}%` }} /></div>
-              <div className="mt-3 flex flex-wrap gap-4 text-[11px] text-slate-500"><span><b className="text-[#10233f]">74</b> in review</span><span><b className="text-[#10233f]">18</b> shortlisted</span><span><b className="text-[#10233f]">8</b> interviews</span></div>
-            </div>
-            <Link to="/employer/candidates" className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-blue-200 px-3 py-2 text-xs font-bold text-blue-700 transition-colors hover:border-blue-400 hover:bg-blue-50">View ranked pipeline <ChevronRight className="h-3.5 w-3.5" /></Link>
-          </div>
+          <Link to="/employer/applications" className="text-xs font-bold text-blue-400 hover:text-blue-300 flex items-center gap-1">
+            <span>View Full Pipeline</span>
+            <ChevronRight className="h-4 w-4" />
+          </Link>
         </div>
 
-        <div className="rounded-2xl border border-blue-100 bg-white p-5 shadow-[0_8px_24px_rgba(37,99,235,0.05)] sm:p-6">
-          <div className="flex items-center justify-between"><div><p className="text-[10px] font-bold uppercase tracking-[0.16em] text-slate-400">This cycle</p><h3 className="mt-1 text-base font-bold text-[#10233f]">Hiring health</h3></div><div className="rounded-lg bg-emerald-50 p-2 text-emerald-600"><CheckCircle2 className="h-4 w-4" /></div></div>
-          <div className="mt-5 flex items-end justify-between"><span className="text-4xl font-bold tabular-nums text-[#10233f]">78%</span><span className="mb-1 inline-flex items-center gap-1 text-xs font-bold text-emerald-600"><ArrowUpRight className="h-3.5 w-3.5" /> 12.6%</span></div>
-          <p className="mt-1 text-xs text-slate-500">Pipeline efficiency vs. previous cycle</p>
-          <div className="mt-5 grid grid-cols-3 gap-2 border-t border-blue-100 pt-4 text-center"><div><p className="text-sm font-bold text-[#10233f]">4.2d</p><p className="mt-1 text-[10px] text-slate-500">Time to review</p></div><div><p className="text-sm font-bold text-[#10233f]">64%</p><p className="mt-1 text-[10px] text-slate-500">Interview show</p></div><div><p className="text-sm font-bold text-[#10233f]">92%</p><p className="mt-1 text-[10px] text-slate-500">Offer accept</p></div></div>
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 pt-2">
+          {hiringPipelineStages.map((stage, idx) => (
+            <div key={stage.label} className="bg-slate-950/80 p-4 rounded-2xl border border-blue-900/30 text-center space-y-1.5">
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Stage 0{idx + 1}</span>
+              <span className="text-xs font-bold text-white font-heading block">{stage.label}</span>
+              <span className="text-2xl font-extrabold text-white font-metrics block">{stage.count}</span>
+              <div className="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden mt-2 border border-blue-900/20">
+                <div className={`h-full rounded-full bg-gradient-to-r ${stage.color}`} style={{ width: stage.pct }} />
+              </div>
+            </div>
+          ))}
         </div>
-      </section>
+      </motion.section>
 
-      <section className="overflow-hidden rounded-2xl border border-blue-100 bg-white shadow-[0_8px_24px_rgba(37,99,235,0.05)]">
-        <div className="flex flex-col justify-between gap-3 border-b border-blue-100 p-5 sm:flex-row sm:items-center sm:px-6">
-          <div><div className="flex items-center gap-2"><h3 className="text-base font-bold text-[#10233f]">Top ranked candidates</h3><span className="rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-bold text-blue-700">AI-assisted fit</span></div><p className="mt-1 text-xs text-slate-500">Explainable matching across verified skills, academics, portfolio, and location.</p></div>
-          <Link to="/employer/candidates" className="inline-flex items-center gap-1 text-xs font-bold text-blue-700 hover:text-blue-900">View all candidates <ArrowUpRight className="h-3.5 w-3.5" /></Link>
+      {/* 4. Priority Requisition & Candidate Ranking Table */}
+      <motion.section 
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4 }}
+        className="bg-[#0B1730] rounded-3xl border border-blue-900/40 overflow-hidden shadow-2xl"
+      >
+        <div className="flex flex-col justify-between gap-3 border-b border-blue-900/40 p-5 sm:flex-row sm:items-center sm:px-6 bg-slate-950/60">
+          <div>
+            <div className="flex items-center gap-2">
+              <h3 className="text-base font-bold text-white font-heading">Top Ranked Candidates</h3>
+              <Badge variant="blue" size="sm">AI Fit Engine</Badge>
+            </div>
+            <p className="mt-1 text-xs text-slate-400">Explainable matching across verified skills, academics, portfolio, and location.</p>
+          </div>
+          <Link to="/employer/candidates" className="text-xs font-bold text-blue-400 hover:text-blue-300 flex items-center gap-1">
+            <span>View All Candidates</span>
+            <ArrowUpRight className="h-4 w-4" />
+          </Link>
         </div>
+
         <div className="overflow-x-auto">
           <table className="w-full min-w-[760px] text-left text-xs">
-            <thead className="border-b border-blue-100 bg-blue-50/50 text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500"><tr><th className="px-5 py-3">Rank</th><th className="px-4 py-3">Candidate</th><th className="px-4 py-3">Match fit</th><th className="px-4 py-3">Skills matched</th><th className="px-4 py-3">Academic</th><th className="px-4 py-3">Portfolio</th><th className="px-5 py-3 text-right">Action</th></tr></thead>
-            <tbody className="divide-y divide-blue-50">
+            <thead className="border-b border-blue-900/40 bg-slate-950/80 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+              <tr>
+                <th className="px-5 py-3.5">Rank</th>
+                <th className="px-4 py-3.5">Candidate</th>
+                <th className="px-4 py-3.5">AI Match Score</th>
+                <th className="px-4 py-3.5">Skills Matched</th>
+                <th className="px-4 py-3.5">Academic</th>
+                <th className="px-4 py-3.5">Portfolio</th>
+                <th className="px-5 py-3.5 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-blue-900/20">
               {candidates.slice(0, 4).map((candidate, index) => {
-                const tone = getMatchTone(candidate.matchScore || 0);
-                const skillRatio = candidate.totalRequiredSkills ? Math.round((candidate.matchedSkillsCount / candidate.totalRequiredSkills) * 100) : 0;
-                return <tr key={candidate.id || index} className="group transition-colors hover:bg-blue-50/40"><td className="px-5 py-4 font-mono text-slate-400">#{String(index + 1).padStart(2, '0')}</td><td className="px-4 py-4"><div className="flex items-center gap-3"><div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-100 text-[10px] font-bold text-blue-700">{getInitials(candidate.name)}</div><div><p className="font-bold text-[#10233f]">{candidate.name}</p><p className="mt-0.5 max-w-[230px] truncate text-[11px] text-slate-500">{candidate.college}</p></div></div></td><td className="px-4 py-4"><div className="flex items-center gap-2"><span className={`font-bold ${tone.text}`}>{candidate.matchScore}%</span><div className={`h-1.5 w-16 overflow-hidden rounded-full ${tone.track}`}><div className={`h-full rounded-full ${tone.bar}`} style={{ width: `${candidate.matchScore}%` }} /></div></div></td><td className="px-4 py-4"><div className="flex items-center gap-2"><span className="text-slate-700">{candidate.matchedSkillsCount} / {candidate.totalRequiredSkills}</span><div className="h-1 w-12 overflow-hidden rounded-full bg-blue-50"><div className="h-full rounded-full bg-blue-500" style={{ width: `${skillRatio}%` }} /></div></div></td><td className="px-4 py-4"><span className="rounded-md border border-blue-100 bg-blue-50/50 px-2 py-1 font-semibold text-slate-700">{candidate.cgpa} / 10</span></td><td className="px-4 py-4 text-slate-500">{candidate.projectsCount} relevant</td><td className="px-5 py-4 text-right"><Link to="/employer/candidates" className="rounded-md border border-blue-200 px-3 py-1.5 text-[11px] font-bold text-blue-700 transition-colors hover:border-blue-400 hover:bg-blue-50 hover:text-blue-900">Review</Link></td></tr>;
+                return (
+                  <tr key={candidate.id || index} className="group transition-colors hover:bg-blue-950/40">
+                    <td className="px-5 py-4 font-mono font-bold text-blue-400 font-metrics">
+                      #{String(index + 1).padStart(2, '0')}
+                    </td>
+                    <td className="px-4 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-xs font-black text-white shadow-md">
+                          {getInitials(candidate.name)}
+                        </div>
+                        <div>
+                          <p className="font-bold text-white font-heading">{candidate.name}</p>
+                          <p className="mt-0.5 max-w-[230px] truncate text-[11px] text-slate-400">{candidate.college}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-4 py-4">
+                      <MatchGauge score={candidate.matchScore || 90} size="sm" />
+                    </td>
+                    <td className="px-4 py-4">
+                      <span className="text-slate-300 font-bold font-metrics">
+                        {candidate.matchedSkillsCount} / {candidate.totalRequiredSkills}
+                      </span>
+                    </td>
+                    <td className="px-4 py-4">
+                      <span className="rounded-full border border-blue-900/40 bg-slate-950 px-3 py-1 font-bold text-slate-200 font-metrics">
+                        {candidate.cgpa} / 10
+                      </span>
+                    </td>
+                    <td className="px-4 py-4 text-slate-400 font-medium">
+                      {candidate.projectsCount} verified repos
+                    </td>
+                    <td className="px-5 py-4 text-right">
+                      <Link 
+                        to="/employer/candidates" 
+                        className="px-3 py-1.5 bg-blue-950/80 hover:bg-blue-600 border border-blue-500/40 text-blue-300 hover:text-white rounded-xl text-xs font-bold transition-all inline-block"
+                      >
+                        Review
+                      </Link>
+                    </td>
+                  </tr>
+                );
               })}
             </tbody>
           </table>
         </div>
-        <div className="flex items-center justify-between border-t border-blue-100 px-5 py-3 text-[11px] text-slate-500 sm:px-6"><span>Showing {Math.min(candidates.length, 4)} of {candidates.length} ranked candidates</span><span className="inline-flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> Data updated live</span></div>
-      </section>
+      </motion.section>
     </div>
   );
 };
