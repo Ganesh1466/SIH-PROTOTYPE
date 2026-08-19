@@ -76,45 +76,46 @@ export const UnifiedLogin = () => {
   const currentRoleConfig = roles.find(r => r.id === activeRole) || roles[0];
 
   return (
-    <div className="min-h-screen bg-[#F7F8FA] flex flex-col justify-center items-center py-16 px-4 sm:px-6 lg:px-8 font-sans text-[#171A21]">
-      <div className="max-w-xl w-full space-y-8">
+    <div className="min-h-screen bg-[#F7F8FA] flex flex-col justify-center items-center py-8 sm:py-16 px-3 sm:px-6 lg:px-8 font-sans text-[#171A21]">
+      <div className="max-w-xl w-full space-y-6 sm:space-y-8">
         
         {/* Official Header with icon-removebg Image */}
-        <div className="text-center flex flex-col items-center space-y-3">
+        <div className="text-center flex flex-col items-center space-y-2 sm:space-y-3">
           
-          <div className="flex items-center space-x-4 bg-white p-4 px-6 rounded-2xl border border-slate-200 shadow-2xs">
+          <div className="flex flex-col xs:flex-row items-center space-y-3 xs:space-y-0 xs:space-x-4 bg-white p-3.5 sm:p-4 px-4 sm:px-6 rounded-2xl border border-slate-200 shadow-2xs max-w-full text-center xs:text-left">
             <img 
               src="/icon-removebg.png" 
               alt="Department Official Logo" 
-              className="h-16 w-auto max-w-[70px] object-contain shrink-0 drop-shadow-xs" 
+              onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/state-emblem.svg'; }}
+              className="h-12 sm:h-16 w-auto max-w-[60px] sm:max-w-[70px] object-contain shrink-0 drop-shadow-xs" 
             />
-            <div className="text-left border-l border-slate-200 pl-4 space-y-0.5">
-              <span className="text-sm font-extrabold uppercase tracking-[0.18em] text-slate-900 block leading-tight">
+            <div className="border-t xs:border-t-0 xs:border-l border-slate-200 pt-2 xs:pt-0 xs:pl-4 space-y-0.5 min-w-0">
+              <span className="text-xs sm:text-sm font-extrabold uppercase tracking-[0.12em] sm:tracking-[0.18em] text-slate-900 block leading-tight truncate">
                 Government of Rajasthan
               </span>
-              <span className="text-xs font-semibold text-slate-600 block leading-tight">
+              <span className="text-[11px] sm:text-xs font-semibold text-slate-600 block leading-tight">
                 Department of Technical Education
               </span>
-              <span className="text-[11px] font-bold text-emerald-700 block tracking-wide">
-                Career & Employment Intelligence Platform
+              <span className="text-[10px] sm:text-[11px] font-bold text-emerald-700 block tracking-wide">
+                Career & Employment Intelligence
               </span>
             </div>
           </div>
 
-          <p className="text-xs text-slate-500 font-medium">
+          <p className="text-[11px] sm:text-xs text-slate-500 font-medium px-2">
             Single Sign-On Gateway for Students, Corporate Recruiters & Directorate
           </p>
         </div>
 
         {/* Main Unified Login Card */}
-        <div className="bg-white p-8 sm:p-10 rounded-2xl border border-[#E7E9EE] shadow-md space-y-6">
+        <div className="bg-white p-4 sm:p-8 md:p-10 rounded-2xl border border-[#E7E9EE] shadow-md space-y-5 sm:space-y-6">
           
           {/* Role Selector Tabs (Student | Employer | Government) */}
           <div>
-            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2.5">
+            <label className="block text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
               Select Workspace Portal
             </label>
-            <div className="grid grid-cols-3 gap-2 p-1.5 bg-slate-100 rounded-xl border border-slate-200/80">
+            <div className="grid grid-cols-3 gap-1.5 sm:gap-2 p-1 sm:p-1.5 bg-slate-100 rounded-xl border border-slate-200/80">
               {roles.map((r) => {
                 const Icon = r.icon;
                 const isSelected = activeRole === r.id;
@@ -123,18 +124,18 @@ export const UnifiedLogin = () => {
                     key={r.id}
                     type="button"
                     onClick={() => handleRoleChange(r.id)}
-                    className={`flex flex-col items-center justify-center py-3 px-2 rounded-lg text-sm font-bold transition-all cursor-pointer ${
+                    className={`flex flex-col items-center justify-center py-2 sm:py-3 px-1 sm:px-2 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer ${
                       isSelected
                         ? 'bg-white text-slate-900 shadow-sm'
                         : 'text-slate-500 hover:text-slate-800'
                     }`}
                   >
-                    <Icon className={`w-5 h-5 mb-1.5 ${
+                    <Icon className={`w-4 h-4 sm:w-5 sm:h-5 mb-1 sm:mb-1.5 ${
                       isSelected 
                         ? (r.id === 'student' ? 'text-indigo-600' : r.id === 'employer' ? 'text-sky-600' : 'text-amber-600') 
                         : 'text-slate-400'
                     }`} />
-                    <span className="text-sm">{r.label}</span>
+                    <span className="text-[11px] sm:text-sm truncate">{r.label}</span>
                   </button>
                 );
               })}
@@ -142,16 +143,16 @@ export const UnifiedLogin = () => {
           </div>
 
           {/* Active Role Indicator */}
-          <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between text-sm">
+          <div className="p-3 sm:p-4 bg-slate-50 rounded-xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-2 text-xs sm:text-sm">
             <div>
-              <span className="text-xs text-slate-400 font-semibold uppercase block">
+              <span className="text-[10px] sm:text-xs text-slate-400 font-semibold uppercase block">
                 Target Role
               </span>
-              <strong className="text-slate-900 text-sm font-bold">
+              <strong className="text-slate-900 text-xs sm:text-sm font-bold">
                 {currentRoleConfig.label} ({currentRoleConfig.badge})
               </strong>
             </div>
-            <span className="text-xs text-slate-600 font-medium">
+            <span className="text-[11px] sm:text-xs text-slate-500 font-medium">
               {currentRoleConfig.desc}
             </span>
           </div>

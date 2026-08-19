@@ -196,9 +196,9 @@ export const SkillDemandIntelligence = () => {
             <Badge variant="blue" size="sm">Dual Radar</Badge>
           </div>
 
-          <div className="h-80 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <RadarChart cx="50%" cy="50%" outerRadius="75%" data={chartData}>
+          <div className="w-full min-h-[300px] h-[300px] sm:h-[340px] relative">
+            <ResponsiveContainer width="100%" height="100%" minHeight={290}>
+              <RadarChart cx="50%" cy="50%" outerRadius="72%" data={chartData}>
                 <PolarGrid stroke="#334155" strokeDasharray="3 3" />
                 <PolarAngleAxis dataKey="shortName" tick={{ fill: '#cbd5e1', fontSize: 10, fontWeight: 600 }} />
                 <PolarRadiusAxis angle={30} domain={[0, 100]} stroke="#475569" tick={{ fontSize: 9, fill: '#94a3b8' }} />
@@ -230,8 +230,8 @@ export const SkillDemandIntelligence = () => {
               <Badge variant="danger" size="sm">Urgent Gaps</Badge>
             </div>
 
-            <div className="h-60 w-full relative flex items-center justify-center">
-              <ResponsiveContainer width="100%" height="100%">
+            <div className="w-full min-h-[240px] h-[240px] relative flex items-center justify-center">
+              <ResponsiveContainer width="100%" height="100%" minHeight={230}>
                 <RadialBarChart 
                   cx="50%" 
                   cy="50%" 
@@ -297,8 +297,8 @@ export const SkillDemandIntelligence = () => {
           </div>
         </div>
 
-        <div className="h-72 w-full">
-          <ResponsiveContainer width="100%" height="100%">
+        <div className="w-full min-h-[280px] h-[280px] sm:h-[320px] relative">
+          <ResponsiveContainer width="100%" height="100%" minHeight={270}>
             <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -15, bottom: 25 }}>
               <defs>
                 <linearGradient id="gradSkillDemandFull" x1="0" y1="0" x2="0" y2="1">

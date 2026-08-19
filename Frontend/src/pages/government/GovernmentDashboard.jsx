@@ -431,8 +431,8 @@ export const GovernmentDashboard = () => {
             <span className="text-xs font-bold text-slate-300">Cohort Comparison Trend (Smooth Multi-Stage Area Dynamics)</span>
             <span className="text-[11px] text-slate-500">Source: government_funnel_analytics</span>
           </div>
-          <div className="h-60 w-full">
-            <ResponsiveContainer width="100%" height="100%">
+          <div className="w-full min-h-[250px] h-[250px] sm:h-[280px] relative">
+            <ResponsiveContainer width="100%" height={250} minHeight={240}>
               <AreaChart data={funnel} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
                 <defs>
                   <linearGradient id="gradApps" x1="0" y1="0" x2="0" y2="1">
@@ -469,7 +469,7 @@ export const GovernmentDashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         {/* District Placement & Opportunity Area Matrix (7 Cols) */}
-        <div className="lg:col-span-7 bg-slate-950 rounded-2xl p-6 border border-slate-800 shadow-xl space-y-4">
+        <div className="lg:col-span-7 bg-slate-950 rounded-2xl p-4 sm:p-6 border border-slate-800 shadow-xl space-y-4">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-3 border-b border-slate-800">
             <div>
               <h2 className="text-sm font-extrabold text-white tracking-tight">
@@ -494,8 +494,8 @@ export const GovernmentDashboard = () => {
             </div>
           </div>
 
-          <div className="h-68 w-full">
-            <ResponsiveContainer width="100%" height="100%">
+          <div className="w-full min-h-[270px] h-[270px] sm:h-[300px] relative">
+            <ResponsiveContainer width="100%" height={270} minHeight={260}>
               <AreaChart data={districtChartData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
                 <defs>
                   <linearGradient id="gradDistJobs" x1="0" y1="0" x2="0" y2="1">
@@ -534,7 +534,7 @@ export const GovernmentDashboard = () => {
         </div>
 
         {/* Jobs vs Internships Donut & Conversion Cards (5 Cols) */}
-        <div className="lg:col-span-5 bg-slate-950 rounded-2xl p-6 border border-slate-800 shadow-xl space-y-4 flex flex-col justify-between">
+        <div className="lg:col-span-5 bg-slate-950 rounded-2xl p-4 sm:p-6 border border-slate-800 shadow-xl space-y-4 flex flex-col justify-between">
           <div>
             <div className="flex justify-between items-center pb-3 border-b border-slate-800">
               <div>
@@ -581,8 +581,8 @@ export const GovernmentDashboard = () => {
             </div>
 
             {/* Glowing Donut Pie Chart */}
-            <div className="h-44 w-full relative flex items-center justify-center">
-              <ResponsiveContainer width="100%" height="100%">
+            <div className="w-full min-h-[190px] h-[190px] sm:h-[220px] relative flex items-center justify-center">
+              <ResponsiveContainer width="100%" height={190} minHeight={180}>
                 <PieChart>
                   <Tooltip 
                     contentStyle={{ backgroundColor: '#020617', borderColor: '#334155', borderRadius: '8px', color: '#fff', fontSize: '11px' }}
@@ -592,8 +592,8 @@ export const GovernmentDashboard = () => {
                     data={jobInternDonutData}
                     cx="50%"
                     cy="50%"
-                    innerRadius={48}
-                    outerRadius={68}
+                    innerRadius={45}
+                    outerRadius={65}
                     paddingAngle={6}
                     dataKey="value"
                   >
@@ -607,9 +607,9 @@ export const GovernmentDashboard = () => {
                   />
                 </PieChart>
               </ResponsiveContainer>
-              <div className="absolute top-16 text-center pointer-events-none">
-                <span className="text-[11px] font-bold text-slate-400 block">Total</span>
-                <span className="text-sm font-black text-white">{(kpis?.activeJobs || 420) + (kpis?.activeInternships || 280)}</span>
+              <div className="absolute top-12 sm:top-14 text-center pointer-events-none">
+                <span className="text-[10px] font-bold text-slate-400 block">Total</span>
+                <span className="text-xs sm:text-sm font-black text-white">{(kpis?.activeJobs || 420) + (kpis?.activeInternships || 280)}</span>
               </div>
             </div>
           </div>
@@ -625,7 +625,7 @@ export const GovernmentDashboard = () => {
       </div>
 
       {/* 5. Industry Skill Demand vs Student Availability (Unique Radar / Spider Web Chart) */}
-      <div className="bg-slate-950 rounded-2xl p-6 border border-slate-800 shadow-xl space-y-5">
+      <div className="bg-slate-950 rounded-2xl p-4 sm:p-6 border border-slate-800 shadow-xl space-y-5">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-3 border-b border-slate-800">
           <div>
             <div className="flex items-center space-x-2">
@@ -665,20 +665,20 @@ export const GovernmentDashboard = () => {
         </div>
 
         {/* Dynamic Chart Container: Radar vs Smooth Area Wave */}
-        <div className="h-80 w-full">
-          <ResponsiveContainer width="100%" height="100%">
+        <div className="w-full min-h-[290px] h-[290px] sm:h-[340px] relative">
+          <ResponsiveContainer width="100%" height={290} minHeight={280}>
             {activeSkillView === 'radar' ? (
-              <RadarChart cx="50%" cy="50%" outerRadius="75%" data={skillChartData}>
+              <RadarChart cx="50%" cy="50%" outerRadius="72%" data={skillChartData}>
                 <PolarGrid stroke="#334155" strokeDasharray="3 3" />
-                <PolarAngleAxis dataKey="name" tick={{ fill: '#cbd5e1', fontSize: 11, fontWeight: 600 }} />
-                <PolarRadiusAxis angle={30} domain={[0, 100]} stroke="#475569" tick={{ fontSize: 10, fill: '#94a3b8' }} />
+                <PolarAngleAxis dataKey="name" tick={{ fill: '#cbd5e1', fontSize: 10, fontWeight: 600 }} />
+                <PolarRadiusAxis angle={30} domain={[0, 100]} stroke="#475569" tick={{ fontSize: 9, fill: '#94a3b8' }} />
                 <Tooltip 
                   contentStyle={{ backgroundColor: '#020617', borderColor: '#334155', borderRadius: '10px', color: '#fff', fontSize: '11px' }}
                   formatter={(val, name, item) => [`${val}%`, name === 'demand' ? 'Employer Demand %' : 'Student Supply %']}
                 />
                 <Radar name="Employer Demand %" dataKey="demand" stroke="#38bdf8" fill="#38bdf8" fillOpacity={0.4} strokeWidth={2} />
                 <Radar name="Student Availability %" dataKey="availability" stroke="#10b981" fill="#10b981" fillOpacity={0.4} strokeWidth={2} />
-                <Legend wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} />
+                <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '8px' }} />
               </RadarChart>
             ) : (
               <AreaChart data={skillChartData} margin={{ top: 10, right: 10, left: -15, bottom: 25 }}>
@@ -697,8 +697,8 @@ export const GovernmentDashboard = () => {
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-                <XAxis dataKey="fullName" tick={{ fontSize: 10, fill: '#cbd5e1' }} angle={-25} textAnchor="end" />
-                <YAxis domain={[0, 100]} tick={{ fontSize: 10, fill: '#94a3b8' }} unit="%" />
+                <XAxis dataKey="fullName" tick={{ fontSize: 9, fill: '#cbd5e1' }} angle={-25} textAnchor="end" />
+                <YAxis domain={[0, 100]} tick={{ fontSize: 9, fill: '#94a3b8' }} unit="%" />
                 <Tooltip 
                   contentStyle={{ backgroundColor: '#020617', borderColor: '#334155', borderRadius: '10px', color: '#fff', fontSize: '11px' }}
                   formatter={(val) => `${val}%`}

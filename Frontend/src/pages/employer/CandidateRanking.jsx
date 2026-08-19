@@ -83,7 +83,20 @@ export const CandidateRanking = () => {
     try {
       setLoading(true);
       const res = await employerApi.getRankedCandidates('job-1');
-      setCandidates(res.data?.length ? res.data : defaultRankedCandidates);
+      const rankedCandidates = Array.isArray(res.data)
+        ? res.data.map(({ student = {}, match = {} }) => ({
+            id: student.id,
+            name: student.name || 'Unnamed Candidate',
+            college: student.college || 'Rajasthan Technical Education Network',
+            gpa: student.cgpa || 'N/A',
+            matchScore: match.matchScore || 0,
+            appliedJob: 'React Developer',
+            skills: Array.isArray(student.skills) ? student.skills : [],
+            hardReqPass: Boolean(match.eligible)
+          }))
+        : [];
+
+      setCandidates(rankedCandidates.length ? rankedCandidates : defaultRankedCandidates);
     } catch (err) {
       setCandidates(defaultRankedCandidates);
     } finally {

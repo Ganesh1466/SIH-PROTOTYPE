@@ -21,22 +21,37 @@ export const getEmployerDashboard = (req, res) => {
   const { id } = req.params;
   const company = companiesStore.find(c => c.id === id) || companiesStore[0];
   const apps = ApplicationService.getApplicationsByCompany(company.id);
+  const rankedCandidates = RecommendationService.getRankedCandidatesForJob('job-1');
 
   const shortlistedCount = apps.filter(a => a.status === 'SHORTLISTED').length;
   const interviewCount = apps.filter(a => a.status.includes('INTERVIEW')).length;
   const selectedCount = apps.filter(a => ['SELECTED', 'OFFERED', 'JOINED'].includes(a.status)).length;
 
+  const topCandidates = rankedCandidates.slice(0, 4).map(({ student, match }) => ({
+    id: student.id,
+    name: student.name,
+    college: student.college,
+    matchScore: match.matchScore,
+    matchedSkillsCount: match.matchedSkills.length,
+    totalRequiredSkills: match.requiredSkillStats.total,
+    cgpa: student.cgpa,
+    projectsCount: student.projects?.length || 0
+  }));
+
+  const metrics = {
+    activeJobs: company.activeJobsCount || 4,
+    totalApplicants: 126,
+    shortlisted: Math.max(shortlistedCount, 18),
+    interviewsScheduled: Math.max(interviewCount, 8),
+    offersExtended: Math.max(selectedCount, 3)
+  };
+
   res.json({
     success: true,
     data: {
       company,
-      metrics: {
-        activeJobs: company.activeJobsCount || 4,
-        totalApplications: apps.length || 486,
-        shortlisted: shortlistedCount || 74,
-        interviews: interviewCount || 28,
-        selected: selectedCount || 12
-      },
+      metrics,
+      topCandidates,
       recentApplications: apps.slice(0, 10)
     }
   });

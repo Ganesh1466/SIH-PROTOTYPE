@@ -87,11 +87,11 @@ export const ProfileHeader = ({
         </div>
 
         {/* Mode Toggle & Save CTA */}
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2 w-full sm:w-auto">
           <button
             type="button"
             onClick={() => setIsEditMode(!isEditMode)}
-            className="px-3.5 py-2.5 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-bold rounded-lg border border-slate-200 transition-colors flex items-center space-x-1.5 cursor-pointer"
+            className="flex-1 sm:flex-none justify-center px-3.5 py-2.5 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-bold rounded-lg border border-slate-200 transition-colors flex items-center space-x-1.5 cursor-pointer text-center"
           >
             {isEditMode ? (
               <>
@@ -111,7 +111,7 @@ export const ProfileHeader = ({
               type="button"
               onClick={onSave}
               disabled={isSaving}
-              className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white text-xs font-bold rounded-lg transition-all shadow-sm flex items-center space-x-1.5 cursor-pointer"
+              className="flex-1 sm:flex-none justify-center px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white text-xs font-bold rounded-lg transition-all shadow-sm flex items-center space-x-1.5 cursor-pointer text-center"
             >
               <Save className="w-4 h-4" />
               <span>{isSaving ? 'Saving...' : 'Save Profile'}</span>

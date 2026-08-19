@@ -521,15 +521,15 @@ export const GovernmentEmployers = () => {
             <Badge variant="blue" size="sm">Sector Breakdown</Badge>
           </div>
 
-          <div className="h-72 w-full relative flex items-center justify-center">
-            <ResponsiveContainer width="100%" height="100%">
+          <div className="w-full min-h-[270px] h-[270px] sm:h-[300px] relative flex items-center justify-center">
+            <ResponsiveContainer width="100%" height="100%" minHeight={260}>
               <PieChart>
                 <Pie
                   data={industryChartData}
                   cx="50%"
                   cy="50%"
-                  innerRadius={65}
-                  outerRadius={95}
+                  innerRadius={60}
+                  outerRadius={85}
                   paddingAngle={4}
                   dataKey="value"
                 >
@@ -548,9 +548,9 @@ export const GovernmentEmployers = () => {
               </PieChart>
             </ResponsiveContainer>
             
-            <div className="absolute top-28 text-center pointer-events-none">
+            <div className="absolute top-24 sm:top-28 text-center pointer-events-none">
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">ENTERPRISES</span>
-              <span className="text-xl font-black text-white">{employers.length}</span>
+              <span className="text-lg sm:text-xl font-black text-white">{employers.length}</span>
             </div>
           </div>
         </div>
@@ -572,8 +572,8 @@ export const GovernmentEmployers = () => {
             </div>
 
             {/* Speedometer Arc */}
-            <div className="h-44 w-full relative flex items-center justify-center">
-              <ResponsiveContainer width="100%" height="100%">
+            <div className="w-full min-h-[190px] h-[190px] sm:h-[220px] relative flex items-center justify-center">
+              <ResponsiveContainer width="100%" height="100%" minHeight={180}>
                 <PieChart>
                   <Pie
                     data={verificationGaugeData}
@@ -581,8 +581,8 @@ export const GovernmentEmployers = () => {
                     cy="80%"
                     startAngle={180}
                     endAngle={0}
-                    innerRadius={68}
-                    outerRadius={92}
+                    innerRadius={65}
+                    outerRadius={88}
                     paddingAngle={4}
                     dataKey="value"
                   >
@@ -596,8 +596,8 @@ export const GovernmentEmployers = () => {
                 </PieChart>
               </ResponsiveContainer>
 
-              <div className="absolute top-24 text-center pointer-events-none">
-                <span className="text-3xl font-black text-white block tracking-tight">{verifiedPercent}%</span>
+              <div className="absolute top-22 sm:top-24 text-center pointer-events-none">
+                <span className="text-2xl sm:text-3xl font-black text-white block tracking-tight">{verifiedPercent}%</span>
                 <span className="text-[10px] text-emerald-400 font-bold uppercase tracking-wider">KYC APPROVED</span>
               </div>
             </div>
@@ -642,8 +642,8 @@ export const GovernmentEmployers = () => {
           </div>
         </div>
 
-        <div className="h-60 w-full">
-          <ResponsiveContainer width="100%" height="100%">
+        <div className="w-full min-h-[250px] h-[250px] sm:h-[280px] relative">
+          <ResponsiveContainer width="100%" height="100%" minHeight={240}>
             <AreaChart data={districtWaveData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
               <defs>
                 <linearGradient id="gradEmpJobs" x1="0" y1="0" x2="0" y2="1">
@@ -759,6 +759,7 @@ export const GovernmentEmployers = () => {
                       <img 
                         src={emp.logo || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=160&auto=format&fit=crop&q=80'} 
                         alt={emp.companyName}
+                        onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/icons.svg'; }}
                         className="w-12 h-12 rounded-xl object-cover border border-slate-700 shadow shrink-0"
                       />
                       <div>
@@ -883,6 +884,7 @@ export const GovernmentEmployers = () => {
                         <img 
                           src={emp.contactPhoto || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80'} 
                           alt={emp.contactPerson}
+                          onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/national-emblem.svg'; }}
                           className="w-9 h-9 rounded-full object-cover border border-amber-400/50 shadow"
                         />
                         <div>
@@ -951,6 +953,7 @@ export const GovernmentEmployers = () => {
                 <img 
                   src={selectedEmployer.logo || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=160&auto=format&fit=crop&q=80'} 
                   alt={selectedEmployer.companyName}
+                  onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/icons.svg'; }}
                   className="w-14 h-14 rounded-2xl object-cover border border-slate-700 shadow"
                 />
                 <div>
@@ -976,6 +979,7 @@ export const GovernmentEmployers = () => {
               <img 
                 src={selectedEmployer.contactPhoto || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80'} 
                 alt={selectedEmployer.contactPerson}
+                onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/national-emblem.svg'; }}
                 className="w-16 h-16 rounded-full object-cover border-2 border-amber-400 shadow"
               />
               <div className="space-y-1 text-center sm:text-left">

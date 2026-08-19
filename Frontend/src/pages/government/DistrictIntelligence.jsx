@@ -307,8 +307,8 @@ export const DistrictIntelligence = () => {
             <Badge variant="blue" size="sm">Multi-Ring Index</Badge>
           </div>
 
-          <div className="h-80 w-full relative flex items-center justify-center">
-            <ResponsiveContainer width="100%" height="100%">
+          <div className="w-full min-h-[300px] h-[300px] sm:h-[340px] relative flex items-center justify-center">
+            <ResponsiveContainer width="100%" height="100%" minHeight={290}>
               <RadialBarChart 
                 cx="50%" 
                 cy="50%" 
@@ -366,8 +366,8 @@ export const DistrictIntelligence = () => {
             </div>
 
             {/* Speedometer Half-Pie Arc */}
-            <div className="h-48 w-full relative flex items-center justify-center">
-              <ResponsiveContainer width="100%" height="100%">
+            <div className="w-full min-h-[190px] h-[190px] sm:h-[220px] relative flex items-center justify-center">
+              <ResponsiveContainer width="100%" height="100%" minHeight={180}>
                 <PieChart>
                   <Pie
                     data={gaugeData}
@@ -375,8 +375,8 @@ export const DistrictIntelligence = () => {
                     cy="80%"
                     startAngle={180}
                     endAngle={0}
-                    innerRadius={70}
-                    outerRadius={95}
+                    innerRadius={65}
+                    outerRadius={90}
                     paddingAngle={4}
                     dataKey="value"
                   >
@@ -390,32 +390,35 @@ export const DistrictIntelligence = () => {
                 </PieChart>
               </ResponsiveContainer>
 
-              <div className="absolute top-28 text-center pointer-events-none">
-                <span className="text-3xl font-black text-white block tracking-tight">{avgPlacementRate}%</span>
-                <span className="text-[11px] text-emerald-400 font-bold uppercase tracking-wider">Above Benchmark</span>
+              <div className="absolute top-24 sm:top-28 text-center pointer-events-none">
+                <span className="text-2xl sm:text-3xl font-black text-white block tracking-tight">{avgPlacementRate}%</span>
+                <span className="text-[10px] sm:text-[11px] text-emerald-400 font-bold uppercase tracking-wider">Above Benchmark</span>
               </div>
             </div>
 
             {/* Quick Metrics Breakdown */}
             <div className="space-y-2 mt-2 bg-slate-900/80 p-3.5 rounded-xl border border-slate-800 text-xs">
-              <div className="flex justify-between">
-                <span className="text-slate-400">Jaipur Highest Rate:</span>
-                <span className="font-bold text-sky-400">86.4%</span>
+              <div className="flex justify-between items-center text-slate-400">
+                <span>Placement Target</span>
+                <span className="font-bold text-white">80.0% statutory standard</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-slate-400">Kota Placement Rate:</span>
-                <span className="font-bold text-amber-400">84.8%</span>
+              <div className="flex justify-between items-center text-slate-400">
+                <span>Current Performance</span>
+                <span className="font-black text-emerald-400">+{((gaugeValue - 80)).toFixed(1)}% above goal</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-slate-400">Jodhpur Placement Rate:</span>
-                <span className="font-bold text-emerald-400">83.2%</span>
+              <div className="flex justify-between items-center text-slate-400">
+                <span>Fastest Growing District</span>
+                <span className="font-bold text-amber-400">Kota (+14.2% YoY)</span>
               </div>
             </div>
           </div>
 
-          <div className="pt-2 text-center text-[11px] text-slate-500 font-medium">
-            All 8 regional divisional clusters operating above state statutory baseline.
-          </div>
+          <button
+            onClick={() => toast.success("Filtered to all 8 core regional district hubs.")}
+            className="w-full py-2.5 text-center text-xs font-bold text-amber-400 bg-slate-900 hover:bg-slate-850 rounded-xl border border-slate-800 transition-colors cursor-pointer"
+          >
+            Refresh District Performance Indicators →
+          </button>
         </div>
 
       </div>
@@ -440,8 +443,8 @@ export const DistrictIntelligence = () => {
           </div>
         </div>
 
-        <div className="h-76 w-full">
-          <ResponsiveContainer width="100%" height="100%">
+        <div className="w-full min-h-[290px] h-[290px] sm:h-[340px] relative">
+          <ResponsiveContainer width="100%" height="100%" minHeight={280}>
             <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
               <defs>
                 <linearGradient id="gradDistrictJobs" x1="0" y1="0" x2="0" y2="1">

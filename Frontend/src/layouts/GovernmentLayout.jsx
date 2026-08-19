@@ -64,50 +64,50 @@ export const GovernmentLayout = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col font-sans selection:bg-amber-500 selection:text-slate-950">
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-amber-500 selection:text-slate-950">
       
       {/* Top Header */}
-      <header className="sticky top-0 z-40 bg-slate-950/95 backdrop-blur border-b border-slate-800 h-16 shadow-lg">
-        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
+      <header className="sticky top-0 z-40 bg-slate-950/95 backdrop-blur border-b border-slate-800/90 h-16 shadow-lg">
+        <div className="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8 h-full flex items-center justify-between gap-2">
           
           {/* Left: Breadcrumb & Toggle */}
-          <div className="flex items-center space-x-3.5">
+          <div className="flex items-center space-x-2 sm:space-x-3.5 min-w-0">
             <button 
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors"
-              aria-label="Toggle menu"
+              className="lg:hidden p-2 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors cursor-pointer shrink-0"
+              aria-label="Toggle government menu"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
-            <div className="flex items-center space-x-2 text-sm">
-              <span className="flex items-center space-x-1.5 text-amber-400 font-bold tracking-tight">
+            <div className="flex items-center space-x-1.5 sm:space-x-2 text-xs sm:text-sm min-w-0">
+              <span className="flex items-center space-x-1.5 text-amber-400 font-bold tracking-tight shrink-0">
                 <Landmark className="w-4 h-4" />
-                <span>Govt of Rajasthan</span>
+                <span className="hidden xs:inline">Govt of Rajasthan</span>
               </span>
-              <ChevronRight className="w-4 h-4 text-slate-600 hidden sm:inline" />
-              <span className="text-slate-200 font-semibold hidden sm:inline text-xs sm:text-sm">
+              <ChevronRight className="w-3.5 h-3.5 text-slate-600 hidden sm:inline shrink-0" />
+              <span className="text-slate-200 font-semibold text-xs sm:text-sm truncate">
                 {getCurrentPageName()}
               </span>
             </div>
           </div>
 
           {/* Right: Badges, Admin Profile & Logout */}
-          <div className="flex items-center space-x-3 sm:space-x-4">
+          <div className="flex items-center space-x-2 sm:space-x-4 shrink-0">
             
             {/* Prototype Demo Data Pill */}
-            <div className="hidden md:flex items-center space-x-1.5 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs font-bold tracking-wide animate-pulse">
-              <span className="w-2 h-2 rounded-full bg-amber-400"></span>
+            <div className="hidden md:flex items-center space-x-1.5 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs font-bold tracking-wide">
+              <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
               <span>Prototype Demo Data</span>
             </div>
 
             {/* Department Badge */}
-            <div className="flex items-center space-x-3 text-sm pl-2 border-l border-slate-800">
-              <div className="w-8 h-8 rounded-lg bg-amber-500 text-slate-950 flex items-center justify-center font-black text-xs shadow-sm">
+            <div className="flex items-center space-x-2 sm:space-x-3 text-sm pl-2 border-l border-slate-800">
+              <div className="w-8 h-8 rounded-lg bg-amber-500 text-slate-950 flex items-center justify-center font-black text-xs shadow-sm shrink-0">
                 RJ
               </div>
               <div className="hidden lg:block text-left">
-                <span className="font-bold text-white text-xs block leading-tight">State Nodal Officer</span>
-                <span className="text-[10px] text-amber-400 font-medium leading-none">rajgoverment@gmail.com</span>
+                <span className="font-bold text-white text-xs block leading-tight truncate">State Nodal Officer</span>
+                <span className="text-[10px] text-amber-400 font-medium leading-none truncate block">rajgoverment@gmail.com</span>
               </div>
             </div>
 
@@ -125,12 +125,31 @@ export const GovernmentLayout = () => {
       </header>
 
       {/* Main Layout Body */}
-      <div className="flex-1 max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col lg:flex-row gap-6">
+      <div className="flex-1 max-w-[1600px] w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 flex flex-col lg:flex-row gap-6 min-w-0 overflow-x-hidden">
         
+        {/* Mobile Backdrop Overlay */}
+        {mobileMenuOpen && (
+          <div 
+            onClick={() => setMobileMenuOpen(false)}
+            className="fixed inset-0 z-40 bg-black/80 backdrop-blur-sm lg:hidden transition-opacity"
+          />
+        )}
+
         {/* Responsive Government Sidebar */}
-        <aside className={`lg:w-[270px] shrink-0 ${mobileMenuOpen ? 'block' : 'hidden lg:block'}`}>
-          <div className="sticky top-22 space-y-5 bg-slate-950 p-4 rounded-2xl border border-slate-800 shadow-xl">
+        <aside className={`fixed lg:static inset-y-0 left-0 z-50 lg:z-auto w-72 lg:w-[270px] shrink-0 bg-slate-950 p-4 lg:p-0 transform transition-transform duration-300 ease-in-out ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'} overflow-y-auto lg:overflow-visible`}>
+          <div className="lg:sticky lg:top-22 space-y-5 bg-slate-950 p-4 rounded-2xl border border-slate-800 shadow-xl">
             
+            {/* Mobile Close Button & Header */}
+            <div className="flex items-center justify-between lg:hidden pb-2 border-b border-slate-800">
+              <span className="text-xs font-black text-amber-400 uppercase tracking-wider">Navigation Menu</span>
+              <button 
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-1 text-slate-400 hover:text-white rounded-lg cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
             {/* Portal Banner */}
             <div className="p-3 bg-gradient-to-r from-amber-500/10 to-transparent rounded-xl border border-amber-500/20 flex items-center space-x-3">
               <div className="w-10 h-10 rounded-xl bg-amber-500 text-slate-950 flex items-center justify-center font-black text-lg shadow-md">

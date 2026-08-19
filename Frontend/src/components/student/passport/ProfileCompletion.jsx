@@ -68,8 +68,8 @@ export const ProfileCompletion = ({ activeStep, setActiveStep, profileData }) =>
   ];
 
   return (
-    <div className="bg-white rounded-xl p-4 border border-[#E7E9EE] shadow-2xs">
-      <div className="flex items-center justify-between overflow-x-auto gap-2 pb-1">
+    <div className="bg-white rounded-xl p-3 sm:p-4 border border-[#E7E9EE] shadow-2xs">
+      <div className="flex items-center overflow-x-auto no-scrollbar gap-2 pb-1 scroll-smooth">
         {steps.map((step) => {
           const Icon = step.icon;
           const isActive = activeStep === step.id;

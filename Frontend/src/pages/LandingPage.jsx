@@ -23,18 +23,18 @@ export const LandingPage = () => {
       
       {/* Minimal Top Nav */}
       <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-xs border-b border-[#E7E9EE] h-14">
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
+        <div className="max-w-[1400px] mx-auto px-3 sm:px-6 lg:px-8 h-full flex items-center justify-between gap-2">
           
-          <div className="flex items-center space-x-2.5">
-            <div className="w-7 h-7 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-xs">
+          <div className="flex items-center space-x-2 sm:space-x-2.5 min-w-0">
+            <div className="w-7 h-7 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-xs shrink-0">
               CS
             </div>
-            <div>
-              <span className="text-sm font-bold tracking-tight text-slate-900 block leading-tight">
+            <div className="min-w-0">
+              <span className="text-xs sm:text-sm font-bold tracking-tight text-slate-900 block leading-tight truncate">
                 CareerSphere Rajasthan
               </span>
-              <span className="text-[10px] uppercase font-semibold text-slate-400">
-                Technical Education Department
+              <span className="text-[9px] sm:text-[10px] uppercase font-semibold text-slate-400 block truncate">
+                Technical Education Dept
               </span>
             </div>
           </div>
@@ -45,18 +45,18 @@ export const LandingPage = () => {
             <a href="#engine" className="hover:text-indigo-600 transition-colors">Matching Engine</a>
           </div>
 
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-2 shrink-0">
             <Link
               to="/student/login"
-              className="px-3.5 py-1.5 text-xs font-semibold text-slate-700 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 rounded-md border border-slate-200 transition-colors"
+              className="px-2.5 sm:px-3.5 py-1.5 text-xs font-semibold text-slate-700 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 rounded-md border border-slate-200 transition-colors"
             >
               Sign In
             </Link>
             <a
               href="#portals"
-              className="px-3.5 py-1.5 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-md transition-colors shadow-xs flex items-center space-x-1"
+              className="px-2.5 sm:px-3.5 py-1.5 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-md transition-colors shadow-xs flex items-center space-x-1"
             >
-              <span>Access Portals</span>
+              <span>Portals</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </a>
           </div>
@@ -64,55 +64,55 @@ export const LandingPage = () => {
         </div>
       </nav>
 
-      {/* Clean Hero Section (No giant cartoonish gradient blob) */}
-      <section className="pt-16 pb-16 bg-white border-b border-[#E7E9EE]">
+      {/* Clean Hero Section */}
+      <section className="pt-10 sm:pt-16 pb-12 sm:pb-16 bg-white border-b border-[#E7E9EE]">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 text-center max-w-4xl">
           
-          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-md bg-slate-50 border border-slate-200 text-slate-700 text-xs font-semibold uppercase tracking-wider mb-6">
-            <ShieldCheck className="w-3.5 h-3.5 text-indigo-600" />
-            <span>Government of Rajasthan · Technical Education Department</span>
+          <div className="inline-flex items-center space-x-1.5 sm:space-x-2 px-2.5 sm:px-3 py-1 rounded-md bg-slate-50 border border-slate-200 text-slate-700 text-[10px] sm:text-xs font-semibold uppercase tracking-wider mb-5 max-w-full truncate">
+            <ShieldCheck className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+            <span className="truncate">Govt of Rajasthan · Technical Education Dept</span>
           </div>
 
-          <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-slate-900 leading-[1.15] mb-5">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold tracking-tight text-slate-900 leading-[1.2] mb-4 sm:mb-5">
             Bridging Student Skills, Corporate Hiring, and State Employment Intelligence.
           </h1>
 
-          <p className="text-sm sm:text-base text-slate-600 max-w-2xl mx-auto leading-relaxed mb-8">
+          <p className="text-xs sm:text-sm md:text-base text-slate-600 max-w-2xl mx-auto leading-relaxed mb-6 sm:mb-8">
             An explainable career readiness and recruitment platform connecting Rajasthan's technical students, enterprise recruiters, and the Department of Technical Education.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-12">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-2.5 sm:gap-3 mb-8 sm:mb-12">
             <a
               href="#portals"
-              className="w-full sm:w-auto px-6 py-2.5 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-md shadow-xs transition-colors"
+              className="w-full sm:w-auto px-6 py-2.5 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-md shadow-xs transition-colors text-center"
             >
               Select Your Portal
             </a>
             <a
               href="#workflow"
-              className="w-full sm:w-auto px-6 py-2.5 text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 rounded-md border border-slate-200 transition-colors"
+              className="w-full sm:w-auto px-6 py-2.5 text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 rounded-md border border-slate-200 transition-colors text-center"
             >
               Platform Overview
             </a>
           </div>
 
           {/* Clean Metric Strip */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-6 border-t border-slate-100 text-left">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 pt-6 border-t border-slate-100 text-left">
             <div className="p-3 bg-slate-50 rounded-lg border border-slate-200/60">
-              <span className="text-[11px] text-slate-500 font-medium block">Registered Students</span>
-              <span className="text-xl font-bold text-slate-900">42,850+</span>
+              <span className="text-[10px] sm:text-[11px] text-slate-500 font-medium block">Registered Students</span>
+              <span className="text-lg sm:text-xl font-bold text-slate-900">42,850+</span>
             </div>
             <div className="p-3 bg-slate-50 rounded-lg border border-slate-200/60">
-              <span className="text-[11px] text-slate-500 font-medium block">Active Employers</span>
-              <span className="text-xl font-bold text-slate-900">1,284+</span>
+              <span className="text-[10px] sm:text-[11px] text-slate-500 font-medium block">Active Employers</span>
+              <span className="text-lg sm:text-xl font-bold text-slate-900">1,284+</span>
             </div>
             <div className="p-3 bg-slate-50 rounded-lg border border-slate-200/60">
-              <span className="text-[11px] text-slate-500 font-medium block">Verified Requisitions</span>
-              <span className="text-xl font-bold text-slate-900">8,640+</span>
+              <span className="text-[10px] sm:text-[11px] text-slate-500 font-medium block">Verified Requisitions</span>
+              <span className="text-lg sm:text-xl font-bold text-slate-900">8,640+</span>
             </div>
             <div className="p-3 bg-slate-50 rounded-lg border border-slate-200/60">
-              <span className="text-[11px] text-slate-500 font-medium block">State Placement Outcome</span>
-              <span className="text-xl font-bold text-emerald-600">78%</span>
+              <span className="text-[10px] sm:text-[11px] text-slate-500 font-medium block">Placement Outcome</span>
+              <span className="text-lg sm:text-xl font-bold text-emerald-600">78%</span>
             </div>
           </div>
 

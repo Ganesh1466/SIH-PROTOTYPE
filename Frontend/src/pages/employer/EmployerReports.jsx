@@ -4,29 +4,29 @@ import {
   TrendingUp, 
   Users, 
   CheckCircle2, 
-  PieChart as PieIcon,
   Download
 } from 'lucide-react';
 import { 
-  BarChart, 
-  Bar, 
+  AreaChart,
+  Area,
   XAxis, 
   YAxis, 
   Tooltip, 
   ResponsiveContainer, 
   CartesianGrid,
-  Cell
+  Legend
 } from 'recharts';
-import { Badge } from '../../components/common/Badge';
 import toast from 'react-hot-toast';
 
-const FUNNEL_DATA = [
-  { stage: 'Applications', count: 486, fill: '#0284c7' },
-  { stage: 'Review', count: 210, fill: '#0ea5e9' },
-  { stage: 'Shortlist', count: 74, fill: '#38bdf8' },
-  { stage: 'Interview', count: 28, fill: '#6366f1' },
-  { stage: 'Selected', count: 16, fill: '#10b981' },
-  { stage: 'Joined', count: 12, fill: '#059669' }
+const MONTHLY_TREND = [
+  { month: 'Jan', applications: 42, shortlisted: 9, interviews: 4, joined: 1 },
+  { month: 'Feb', applications: 58, shortlisted: 13, interviews: 6, joined: 2 },
+  { month: 'Mar', applications: 65, shortlisted: 16, interviews: 7, joined: 2 },
+  { month: 'Apr', applications: 74, shortlisted: 19, interviews: 9, joined: 3 },
+  { month: 'May', applications: 82, shortlisted: 14, interviews: 8, joined: 2 },
+  { month: 'Jun', applications: 56, shortlisted: 10, interviews: 5, joined: 2 },
+  { month: 'Jul', applications: 61, shortlisted: 8, interviews: 4, joined: 1 },
+  { month: 'Aug', applications: 48, shortlisted: 5, interviews: 3, joined: 1 }
 ];
 
 export const EmployerReports = () => {
@@ -53,30 +53,54 @@ export const EmployerReports = () => {
         </button>
       </div>
 
-      {/* Funnel Chart Card */}
+      {/* Hiring Trend Curve */}
       <div className="bg-white rounded-xl p-5 border border-slate-200 space-y-4">
-        <div className="flex justify-between items-center pb-2 border-b border-slate-100">
-          <h3 className="text-sm font-bold text-slate-900 tracking-tight">
-            Application-to-Joined Conversion Progression
-          </h3>
-          <Badge variant="blue" size="sm">486 Total Applicants</Badge>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-slate-100">
+          <div>
+            <h3 className="text-sm font-bold text-slate-900 tracking-tight">
+              Monthly Hiring Performance
+            </h3>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Candidate movement across the recruitment pipeline over the current cycle.
+            </p>
+          </div>
+          <div className="flex items-center gap-3 text-[11px] font-semibold text-slate-500">
+            <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-sky-500" />Applications</span>
+            <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-indigo-500" />Interviews</span>
+            <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-emerald-500" />Joined</span>
+          </div>
         </div>
 
-        <div className="h-64 w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={FUNNEL_DATA} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-              <XAxis dataKey="stage" tick={{ fontSize: 11, fill: '#64748b' }} />
-              <YAxis tick={{ fontSize: 11, fill: '#64748b' }} />
+        <div className="w-full min-h-[280px] h-[280px] sm:h-[320px] relative">
+          <ResponsiveContainer width="100%" height={280} minHeight={260}>
+            <AreaChart data={MONTHLY_TREND} margin={{ top: 12, right: 12, left: -18, bottom: 0 }}>
+              <defs>
+                <linearGradient id="employerApplicationsGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#0284c7" stopOpacity={0.24} />
+                  <stop offset="95%" stopColor="#0284c7" stopOpacity={0} />
+                </linearGradient>
+                <linearGradient id="employerInterviewsGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#6366f1" stopOpacity={0.2} />
+                  <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
+                </linearGradient>
+                <linearGradient id="employerJoinedGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#10b981" stopOpacity={0.22} />
+                  <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
+              <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#64748b' }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 11, fill: '#64748b' }} axisLine={false} tickLine={false} width={34} />
               <Tooltip
-                contentStyle={{ backgroundColor: '#0f172a', borderRadius: '8px', color: '#fff', fontSize: '11px' }}
+                contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', borderRadius: '8px', color: '#fff', fontSize: '11px' }}
+                labelStyle={{ color: '#cbd5e1', fontWeight: 700, marginBottom: 4 }}
               />
-              <Bar dataKey="count" radius={[4, 4, 0, 0]}>
-                {FUNNEL_DATA.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.fill} />
-                ))}
-              </Bar>
-            </BarChart>
+              <Legend verticalAlign="top" align="right" wrapperStyle={{ fontSize: '11px', paddingBottom: '12px' }} />
+              <Area type="monotone" dataKey="applications" name="Applications" stroke="#0284c7" fill="url(#employerApplicationsGradient)" strokeWidth={2.5} dot={{ r: 2.5, fill: '#0284c7' }} activeDot={{ r: 5 }} />
+              <Area type="monotone" dataKey="shortlisted" name="Shortlisted" stroke="#0ea5e9" fill="none" strokeWidth={2} strokeDasharray="5 4" dot={false} />
+              <Area type="monotone" dataKey="interviews" name="Interviews" stroke="#6366f1" fill="url(#employerInterviewsGradient)" strokeWidth={2.5} dot={{ r: 2.5, fill: '#6366f1' }} activeDot={{ r: 5 }} />
+              <Area type="monotone" dataKey="joined" name="Joined" stroke="#10b981" fill="url(#employerJoinedGradient)" strokeWidth={2.5} dot={{ r: 2.5, fill: '#10b981' }} activeDot={{ r: 5 }} />
+            </AreaChart>
           </ResponsiveContainer>
         </div>
       </div>

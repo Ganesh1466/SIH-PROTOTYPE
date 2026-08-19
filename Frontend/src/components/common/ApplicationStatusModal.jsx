@@ -60,24 +60,24 @@ export const ApplicationStatusModal = ({ isOpen, onClose, application, job }) =>
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs overflow-y-auto animate-in fade-in duration-150">
-      <div className="relative w-full max-w-2xl bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden my-8">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-900/50 backdrop-blur-xs overflow-y-auto animate-in fade-in duration-150">
+      <div className="relative w-full max-w-[95vw] sm:max-w-2xl bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden my-4 sm:my-8 max-h-[92vh] flex flex-col">
         
         {/* Header */}
-        <div className="p-5 border-b border-slate-200 flex items-start justify-between bg-gradient-to-r from-indigo-50/70 to-slate-50">
-          <div>
-            <div className="flex items-center space-x-2 mb-1">
-              <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-bold inline-flex items-center space-x-1">
-                <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+        <div className="p-4 sm:p-5 border-b border-slate-200 flex items-start justify-between bg-gradient-to-r from-indigo-50/70 to-slate-50 gap-2 shrink-0">
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-1.5 mb-1">
+              <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] sm:text-[11px] font-bold inline-flex items-center space-x-1">
+                <CheckCircle2 className="w-3 h-3 text-emerald-600 shrink-0" />
                 <span>Active Application</span>
               </span>
-              <span className="text-slate-300">·</span>
-              <span className="text-xs text-slate-500 font-semibold">{companyName}</span>
+              <span className="text-slate-300 hidden xs:inline">·</span>
+              <span className="text-xs text-slate-500 font-semibold truncate max-w-[140px] sm:max-w-none">{companyName}</span>
             </div>
-            <h2 className="text-lg font-bold text-slate-900 tracking-tight">
+            <h2 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight truncate">
               {jobTitle}
             </h2>
-            <p className="text-xs text-slate-500 mt-0.5 flex items-center space-x-1">
+            <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5">
               <span>Applied on {appliedDate}</span>
               <span>·</span>
               <span className="text-indigo-600 font-semibold">{matchScore}% Match Fit</span>
@@ -86,14 +86,15 @@ export const ApplicationStatusModal = ({ isOpen, onClose, application, job }) =>
 
           <button
             onClick={onClose}
-            className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 rounded-lg transition-colors cursor-pointer"
+            className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 rounded-lg transition-colors cursor-pointer shrink-0"
+            aria-label="Close modal"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Modal Body */}
-        <div className="p-6 space-y-6 max-h-[75vh] overflow-y-auto">
+        <div className="p-4 sm:p-6 space-y-5 sm:space-y-6 overflow-y-auto flex-1">
 
           {/* Shortlist Highlight Card */}
           <div className="p-4 rounded-xl bg-gradient-to-r from-amber-50 to-amber-100/60 border border-amber-200 shadow-2xs flex items-start space-x-3.5">

@@ -5,6 +5,7 @@ export const StateEmblem = ({ className = "h-12 w-auto", dark = false }) => {
     <img 
       src="/state-emblem.svg" 
       alt="Emblem of Government of Rajasthan" 
+      onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/national-emblem.svg'; }}
       className={`${className} object-contain ${dark ? 'invert' : ''}`}
     />
   );

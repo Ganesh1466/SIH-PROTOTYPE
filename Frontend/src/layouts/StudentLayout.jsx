@@ -81,37 +81,39 @@ export const StudentLayout = () => {
       
       {/* Spacious Top Bar */}
       <header className="sticky top-0 z-40 bg-white border-b border-[#E7E9EE] h-16 shadow-2xs">
-        <div className="max-w-[1550px] mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
+        <div className="max-w-[1550px] mx-auto px-3 sm:px-6 lg:px-8 h-full flex items-center justify-between gap-2">
           
           {/* Left: Mobile Toggle & Breadcrumb */}
-          <div className="flex items-center space-x-3.5">
+          <div className="flex items-center space-x-2 sm:space-x-3.5 min-w-0">
             <button 
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 rounded-lg text-slate-500 hover:bg-slate-100"
+              className="lg:hidden p-2 rounded-lg text-slate-500 hover:bg-slate-100 shrink-0"
+              aria-label="Open student menu"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
-            <div className="flex items-center space-x-2.5 text-sm font-semibold text-slate-500">
-              <span className="text-indigo-600 font-black tracking-tight">Hiring Wallah</span>
-              <ChevronRight className="w-4 h-4 text-slate-300" />
-              <span className="text-slate-900 font-extrabold text-base">{getCurrentPageName()}</span>
+            <div className="flex items-center space-x-1.5 sm:space-x-2.5 text-xs sm:text-sm font-semibold text-slate-500 min-w-0">
+              <span className="text-indigo-600 font-black tracking-tight shrink-0 hidden xs:inline">Hiring Wallah</span>
+              <ChevronRight className="w-3.5 h-3.5 text-slate-300 shrink-0 hidden xs:inline" />
+              <span className="text-slate-900 font-extrabold text-sm sm:text-base truncate">{getCurrentPageName()}</span>
             </div>
           </div>
 
           {/* Right: Search, Notifications & Profile */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 sm:space-x-4 shrink-0">
             <div className="relative hidden md:block">
               <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 placeholder="Search opportunities..."
-                className="w-56 pl-9 pr-4 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:w-64 transition-all focus:bg-white focus:outline-hidden"
+                className="w-48 lg:w-56 pl-9 pr-4 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:w-60 transition-all focus:bg-white focus:outline-hidden"
               />
             </div>
 
             <Link
               to="/student/notifications"
               className="relative p-2 text-slate-500 hover:text-indigo-600 hover:bg-slate-50 rounded-lg transition-colors"
+              title="Notifications"
             >
               <Bell className="w-5 h-5" />
               {unreadCount > 0 && (
@@ -121,11 +123,11 @@ export const StudentLayout = () => {
 
             <div className="h-5 w-px bg-slate-200" />
 
-            <div className="flex items-center space-x-2.5 text-sm">
-              <div className="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-sm">
+            <div className="flex items-center space-x-2 text-sm">
+              <div className="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-xs sm:text-sm shrink-0">
                 RS
               </div>
-              <span className="hidden sm:inline font-bold text-slate-900">{user?.name || 'Rahul Sharma'}</span>
+              <span className="hidden sm:inline font-bold text-slate-900 max-w-[120px] truncate">{user?.name || 'Rahul Sharma'}</span>
             </div>
 
             <button
@@ -141,12 +143,38 @@ export const StudentLayout = () => {
       </header>
 
       {/* Main Container */}
-      <div className="flex-1 max-w-[1550px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col lg:flex-row gap-8">
+      <div className="flex-1 max-w-[1550px] w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 flex flex-col lg:flex-row gap-6 lg:gap-8 min-w-0 overflow-x-hidden">
         
+        {/* Mobile Backdrop */}
+        {mobileMenuOpen && (
+          <div 
+            onClick={() => setMobileMenuOpen(false)}
+            className="fixed inset-0 z-40 bg-black/60 backdrop-blur-xs lg:hidden transition-opacity"
+          />
+        )}
+
         {/* Enterprise Sidebar (260px width) */}
-        <aside className={`lg:w-[260px] shrink-0 ${mobileMenuOpen ? 'block' : 'hidden lg:block'}`}>
-          <div className="sticky top-24 space-y-6 bg-white p-5 rounded-2xl border border-[#E7E9EE] shadow-2xs">
+        <aside className={`
+          fixed lg:static inset-y-0 left-0 z-50 lg:z-auto
+          w-72 lg:w-[260px] shrink-0
+          bg-white p-4 lg:p-0
+          transform transition-transform duration-300 ease-in-out
+          ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+          overflow-y-auto lg:overflow-visible
+        `}>
+          <div className="lg:sticky lg:top-24 space-y-6 bg-white p-5 rounded-2xl border border-[#E7E9EE] shadow-2xs">
             
+            {/* Mobile Close Button */}
+            <div className="flex items-center justify-between lg:hidden pb-3 border-b border-slate-100">
+              <span className="text-xs font-bold text-indigo-600 uppercase tracking-wider">Student Menu</span>
+              <button 
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-1 text-slate-400 hover:text-slate-700 rounded-lg cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
             {/* Logo */}
             <div className="flex items-center space-x-3 pb-4 border-b border-slate-100">
               <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-black text-base">
