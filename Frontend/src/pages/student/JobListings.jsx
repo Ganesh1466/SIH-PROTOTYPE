@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { jobApi } from '../../api/jobApi';
 import { applicationApi } from '../../api/applicationApi';
+import { Badge } from '../../components/common/Badge';
 import { ExplainableMatchModal } from '../../components/common/ExplainableMatchModal';
 import { ApplicationStatusModal } from '../../components/common/ApplicationStatusModal';
 import { SkeletonLoader } from '../../components/common/SkeletonLoader';
