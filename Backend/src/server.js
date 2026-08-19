@@ -95,9 +95,16 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Modular REST API Endpoints
+// CORS ke baad routes (Order is important)
+app.use('/student', studentRoutes);
+app.use('/notifications', notificationRoutes);
+app.use('/passport', studentProfileRoutes);
+
+// Modular REST API Endpoints (/api/...)
+app.use('/api/student', studentRoutes);
 app.use('/api/student/profile', studentProfileRoutes);
 app.use('/api/students', studentRoutes);
+app.use('/api/passport', studentProfileRoutes);
 app.use('/api/employer/opportunities', opportunityRoutes);
 app.use('/api/employers', employerRoutes);
 app.use('/api/jobs', jobRoutes);
