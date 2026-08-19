@@ -13,61 +13,6 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
       },
-      '/student': {
-        target: 'http://localhost:5000',
-        changeOrigin: true,
-        secure: false,
-      },
-      '/students': {
-        target: 'http://localhost:5000',
-        changeOrigin: true,
-        secure: false,
-      },
-      '/jobs': {
-        target: 'http://localhost:5000',
-        changeOrigin: true,
-        secure: false,
-      },
-      '/employers': {
-        target: 'http://localhost:5000',
-        changeOrigin: true,
-        secure: false,
-      },
-      '/applications': {
-        target: 'http://localhost:5000',
-        changeOrigin: true,
-        secure: false,
-      },
-      '/notifications': {
-        target: 'http://localhost:5000',
-        changeOrigin: true,
-        secure: false,
-      },
-      '/matching': {
-        target: 'http://localhost:5000',
-        changeOrigin: true,
-        secure: false,
-      },
-      '/learning': {
-        target: 'http://localhost:5000',
-        changeOrigin: true,
-        secure: false,
-      },
-      '/interviews': {
-        target: 'http://localhost:5000',
-        changeOrigin: true,
-        secure: false,
-      },
-      '/government': {
-        target: 'http://localhost:5000',
-        changeOrigin: true,
-        secure: false,
-      },
-      '/passport': {
-        target: 'http://localhost:5000',
-        changeOrigin: true,
-        secure: false,
-      },
     },
   },
   build: {
