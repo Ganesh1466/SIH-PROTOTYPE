@@ -20,12 +20,8 @@ dotenv.config();
 const app = express();
 
 // Security & Parsing Middlewares
-const allowedOrigins = process.env.FRONTEND_URL 
-  ? [process.env.FRONTEND_URL, 'http://localhost:5173', 'http://localhost:3000']
-  : '*';
-
 app.use(cors({
-  origin: allowedOrigins,
+  origin: process.env.FRONTEND_URL || '*',
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization', 'x-user-email'],
   credentials: true
