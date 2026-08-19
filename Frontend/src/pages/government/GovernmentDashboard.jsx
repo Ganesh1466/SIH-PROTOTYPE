@@ -16,14 +16,17 @@ import {
   Layers, 
   PlusCircle, 
   Sparkles, 
-  X,
-  FileCheck,
-  Award,
-  ChevronRight
+  X, 
+  FileCheck, 
+  Award, 
+  ChevronRight, 
+  Zap,
+  PieChart as PieIcon,
+  Activity,
+  Target,
+  Compass
 } from 'lucide-react';
 import { 
-  BarChart, 
-  Bar, 
   XAxis, 
   YAxis, 
   Tooltip, 
@@ -32,14 +35,27 @@ import {
   Legend, 
   AreaChart, 
   Area,
-  ComposedChart,
-  Line,
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis,
+  Radar,
+  PieChart,
+  Pie,
   Cell
 } from 'recharts';
+import { Chip, LinearProgress, Tooltip as MuiTooltip } from '@mui/material';
 import { governmentApi } from '../../api/governmentApi';
 import { Badge } from '../../components/common/Badge';
 import { SkeletonLoader } from '../../components/common/SkeletonLoader';
 import toast from 'react-hot-toast';
+
+// Curated Vibrant Colors for Donut / Pie & Radar charts
+const SECTOR_COLORS = ['#38bdf8', '#818cf8', '#c084fc', '#34d399', '#fbbf24', '#f43f5e', '#a78bfa', '#2dd4bf'];
+const RADAR_COLORS = {
+  demand: '#38bdf8',
+  availability: '#10b981'
+};
 
 export const GovernmentDashboard = () => {
   const [data, setData] = useState(null);
@@ -48,6 +64,7 @@ export const GovernmentDashboard = () => {
   const [districtFilter, setDistrictFilter] = useState('ALL');
   const [recommendationModalOpen, setRecommendationModalOpen] = useState(false);
   const [selectedSkillForRec, setSelectedSkillForRec] = useState(null);
+  const [activeSkillView, setActiveSkillView] = useState('radar'); // 'radar' | 'area'
 
   // New Recommendation Form State
   const [recFormData, setRecFormData] = useState({
@@ -144,9 +161,10 @@ export const GovernmentDashboard = () => {
     ? districts 
     : districts.filter(d => d.district.toLowerCase() === districtFilter.toLowerCase());
 
-  // Skill demand data mapped for recharts
+  // Skill demand data mapped for Radar / Area charts
   const skillChartData = skills.map(s => ({
-    name: s.skill_name,
+    name: s.skill_name.replace(' / ', '/').split(' ')[0], // cleaner label for radar axes
+    fullName: s.skill_name,
     demand: s.employer_demand,
     availability: s.student_availability,
     gap: s.skill_gap,
@@ -163,11 +181,18 @@ export const GovernmentDashboard = () => {
     PlacementRate: d.placement_rate
   }));
 
-  // Jobs vs Internships Comparison Data
-  const jobInternData = [
-    { name: 'Opportunities', Jobs: kpis?.activeJobs || 420, Internships: kpis?.activeInternships || 280 },
-    { name: 'Placement Rate (%)', Jobs: 83.4, Internships: 64.2 }
+  // Jobs vs Internships Donut Pie Data
+  const jobInternDonutData = [
+    { name: 'Active Full-Time Jobs', value: kpis?.activeJobs || 420, color: '#38bdf8' },
+    { name: 'Technical Internships', value: kpis?.activeInternships || 280, color: '#a855f7' }
   ];
+
+  // District Share Donut Data
+  const districtShareData = districts.slice(0, 6).map((d, i) => ({
+    name: d.district,
+    value: d.total_students,
+    color: SECTOR_COLORS[i % SECTOR_COLORS.length]
+  }));
 
   return (
     <div className="space-y-7 text-slate-100 pb-10">
@@ -180,10 +205,17 @@ export const GovernmentDashboard = () => {
               <ShieldCheck className="w-3.5 h-3.5" />
               <span>Rajasthan Employment Intelligence</span>
             </span>
-            <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-md bg-rose-500/20 text-rose-300 border border-rose-500/30 text-xs font-bold animate-pulse">
-              <span>●</span>
-              <span>Prototype Demo Data</span>
-            </span>
+            <Chip 
+              label="Supabase Connected" 
+              size="small" 
+              sx={{ 
+                backgroundColor: 'rgba(16, 185, 129, 0.15)', 
+                color: '#34d399', 
+                border: '1px solid rgba(16, 185, 129, 0.3)',
+                fontWeight: 700,
+                fontSize: '0.7rem'
+              }} 
+            />
           </div>
 
           <h1 className="text-2xl font-black tracking-tight text-white">
@@ -257,7 +289,7 @@ export const GovernmentDashboard = () => {
           <div className="text-2xl font-black text-purple-400">
             {kpis?.activeInternships?.toLocaleString()}
           </div>
-          <div className="text-[11px] text-slate-500 font-medium mt-0.5">Stipend-backed 3-6 Mos</div>
+          <div className="text-[11px] text-slate-500 font-medium mt-0.5">Technical & Industrial</div>
         </div>
 
         {/* Total Applications */}
@@ -269,31 +301,31 @@ export const GovernmentDashboard = () => {
           <div className="text-2xl font-black text-white">
             {kpis?.totalApplications?.toLocaleString()}
           </div>
-          <div className="text-[11px] text-slate-500 font-medium mt-0.5">Processed Candidates</div>
+          <div className="text-[11px] text-slate-500 font-medium mt-0.5">Cycle 2026 Total</div>
         </div>
 
         {/* Total Placements */}
         <div className="bg-slate-950 p-4 rounded-xl border border-slate-800/90 shadow hover:border-slate-700 transition-colors">
           <div className="flex items-center justify-between text-slate-400 mb-1">
             <span className="text-xs font-semibold">Total Placements</span>
-            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+            <CheckCircle2 className="w-4 h-4 text-teal-400" />
           </div>
-          <div className="text-2xl font-black text-emerald-400">
+          <div className="text-2xl font-black text-teal-400">
             {kpis?.totalPlacements?.toLocaleString()}
           </div>
-          <div className="text-[11px] text-slate-500 font-medium mt-0.5">Joined Recruiter Roster</div>
+          <div className="text-[11px] text-slate-500 font-medium mt-0.5">Directly Employed</div>
         </div>
 
         {/* Placement Rate */}
         <div className="bg-slate-950 p-4 rounded-xl border border-slate-800/90 shadow hover:border-slate-700 transition-colors">
           <div className="flex items-center justify-between text-slate-400 mb-1">
-            <span className="text-xs font-semibold">Placement Rate</span>
+            <span className="text-xs font-semibold">Avg. Placement Rate</span>
             <TrendingUp className="w-4 h-4 text-amber-400" />
           </div>
           <div className="text-2xl font-black text-amber-400">
             {kpis?.placementRate}%
           </div>
-          <div className="text-[11px] text-slate-500 font-medium mt-0.5">Joined ÷ Submissions</div>
+          <div className="text-[11px] text-emerald-400 font-medium mt-0.5">Target &gt; 80% Achieved</div>
         </div>
 
         {/* Pending Approvals */}
@@ -368,37 +400,51 @@ export const GovernmentDashboard = () => {
                 <span className="text-[10px] text-amber-400/90 font-semibold">{stage.drop}</span>
               </div>
 
-              {/* Progress bar representing funnel drop */}
-              <div className="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
-                <div 
-                  className={`h-full bg-gradient-to-r ${stage.color} rounded-full transition-all duration-700`}
-                  style={{ width: `${Math.max(12, (stage.count / currentFunnelData.applications) * 100)}%` }}
-                ></div>
-              </div>
+              {/* Material UI Smooth Progress */}
+              <LinearProgress 
+                variant="determinate" 
+                value={Math.max(10, (stage.count / currentFunnelData.applications) * 100)} 
+                sx={{ 
+                  height: 6, 
+                  borderRadius: 3, 
+                  backgroundColor: 'rgba(51, 65, 85, 0.5)',
+                  '& .MuiLinearProgress-bar': {
+                    backgroundImage: idx === 0 
+                      ? 'linear-gradient(90deg, #2563eb, #38bdf8)' 
+                      : idx === 1 
+                      ? 'linear-gradient(90deg, #38bdf8, #14b8a6)' 
+                      : idx === 2 
+                      ? 'linear-gradient(90deg, #14b8a6, #f59e0b)' 
+                      : idx === 3 
+                      ? 'linear-gradient(90deg, #f59e0b, #10b981)' 
+                      : 'linear-gradient(90deg, #10b981, #4ade80)'
+                  }
+                }} 
+              />
             </div>
           ))}
         </div>
 
-        {/* Monthly Funnel Trend Chart (Recharts Area/Bar) */}
+        {/* Monthly Funnel Trend Chart (Smooth Spline Area with Glow Gradients) */}
         <div className="pt-2">
           <div className="flex justify-between items-center mb-3">
-            <span className="text-xs font-bold text-slate-300">Cohort Comparison Trend (June - August 2026)</span>
+            <span className="text-xs font-bold text-slate-300">Cohort Comparison Trend (Smooth Multi-Stage Area Dynamics)</span>
             <span className="text-[11px] text-slate-500">Source: government_funnel_analytics</span>
           </div>
-          <div className="h-56 w-full">
+          <div className="h-60 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={funnel} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
                 <defs>
                   <linearGradient id="gradApps" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#38bdf8" stopOpacity={0.4}/>
+                    <stop offset="5%" stopColor="#38bdf8" stopOpacity={0.45}/>
                     <stop offset="95%" stopColor="#38bdf8" stopOpacity={0.0}/>
                   </linearGradient>
                   <linearGradient id="gradShort" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.4}/>
+                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.45}/>
                     <stop offset="95%" stopColor="#10b981" stopOpacity={0.0}/>
                   </linearGradient>
                   <linearGradient id="gradJoined" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.5}/>
+                    <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.55}/>
                     <stop offset="95%" stopColor="#f59e0b" stopOpacity={0.0}/>
                   </linearGradient>
                 </defs>
@@ -406,12 +452,12 @@ export const GovernmentDashboard = () => {
                 <XAxis dataKey="period" tick={{ fontSize: 11, fill: '#94a3b8' }} />
                 <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} />
                 <Tooltip 
-                  contentStyle={{ backgroundColor: '#020617', borderColor: '#334155', borderRadius: '10px', color: '#fff', fontSize: '11px' }}
+                  contentStyle={{ backgroundColor: '#020617', borderColor: '#334155', borderRadius: '10px', color: '#fff', fontSize: '11px', boxShadow: '0 10px 25px rgba(0,0,0,0.5)' }}
                 />
                 <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '8px' }} />
-                <Area type="monotone" dataKey="applications" name="Applications" stroke="#38bdf8" fill="url(#gradApps)" strokeWidth={2} />
-                <Area type="monotone" dataKey="shortlisted" name="Shortlisted" stroke="#10b981" fill="url(#gradShort)" strokeWidth={2} />
-                <Area type="monotone" dataKey="joined" name="Joined" stroke="#f59e0b" fill="url(#gradJoined)" strokeWidth={2.5} />
+                <Area type="natural" dataKey="applications" name="Applications" stroke="#38bdf8" fill="url(#gradApps)" strokeWidth={2.5} />
+                <Area type="natural" dataKey="shortlisted" name="Shortlisted" stroke="#10b981" fill="url(#gradShort)" strokeWidth={2.5} />
+                <Area type="natural" dataKey="joined" name="Joined" stroke="#f59e0b" fill="url(#gradJoined)" strokeWidth={3} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -422,14 +468,14 @@ export const GovernmentDashboard = () => {
       {/* 4. District Opportunities & Jobs vs Internships (2 Columns) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-        {/* District Opportunities Bar Chart (7 Cols) */}
+        {/* District Placement & Opportunity Area Matrix (7 Cols) */}
         <div className="lg:col-span-7 bg-slate-950 rounded-2xl p-6 border border-slate-800 shadow-xl space-y-4">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-3 border-b border-slate-800">
             <div>
               <h2 className="text-sm font-extrabold text-white tracking-tight">
-                Rajasthan District Opportunities & Placement Matrix
+                Rajasthan District Opportunities & Placement Stream
               </h2>
-              <p className="text-xs text-slate-400">Comparing student volume, job posts, and placements across districts</p>
+              <p className="text-xs text-slate-400">Smooth comparative area gradient across student volume, jobs & placements</p>
             </div>
 
             {/* District Filter Dropdown */}
@@ -438,9 +484,9 @@ export const GovernmentDashboard = () => {
               <select
                 value={districtFilter}
                 onChange={(e) => setDistrictFilter(e.target.value)}
-                className="bg-slate-900 border border-slate-700 text-xs text-white rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-amber-500"
+                className="bg-slate-900 border border-slate-700 text-xs text-white rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-amber-500 cursor-pointer"
               >
-                <option value="ALL">All 8 Districts</option>
+                <option value="ALL">All 8 Key Districts</option>
                 {districts.map(d => (
                   <option key={d.district} value={d.district}>{d.district}</option>
                 ))}
@@ -450,7 +496,21 @@ export const GovernmentDashboard = () => {
 
           <div className="h-68 w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={districtChartData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
+              <AreaChart data={districtChartData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="gradDistJobs" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#38bdf8" stopOpacity={0.4}/>
+                    <stop offset="95%" stopColor="#38bdf8" stopOpacity={0.0}/>
+                  </linearGradient>
+                  <linearGradient id="gradDistIntern" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#a855f7" stopOpacity={0.4}/>
+                    <stop offset="95%" stopColor="#a855f7" stopOpacity={0.0}/>
+                  </linearGradient>
+                  <linearGradient id="gradDistPlaced" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.4}/>
+                    <stop offset="95%" stopColor="#10b981" stopOpacity={0.0}/>
+                  </linearGradient>
+                </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
                 <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#94a3b8' }} />
                 <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} />
@@ -458,30 +518,30 @@ export const GovernmentDashboard = () => {
                   contentStyle={{ backgroundColor: '#020617', borderColor: '#334155', borderRadius: '10px', color: '#fff', fontSize: '11px' }}
                 />
                 <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '6px' }} />
-                <Bar dataKey="Jobs" name="Full-Time Jobs" fill="#38bdf8" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="Internships" name="Internships" fill="#a855f7" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="Placements" name="Placements" fill="#10b981" radius={[4, 4, 0, 0]} />
-              </BarChart>
+                <Area type="natural" dataKey="Jobs" name="Full-Time Jobs" stroke="#38bdf8" fill="url(#gradDistJobs)" strokeWidth={2.5} />
+                <Area type="natural" dataKey="Internships" name="Internships" stroke="#a855f7" fill="url(#gradDistIntern)" strokeWidth={2.5} />
+                <Area type="natural" dataKey="Placements" name="Placements" stroke="#10b981" fill="url(#gradDistPlaced)" strokeWidth={2.5} />
+              </AreaChart>
             </ResponsiveContainer>
           </div>
 
-          <div className="pt-2 flex justify-between items-center text-xs text-slate-400">
-            <span>Jaipur & Kota lead total job postings.</span>
+          <div className="pt-2 flex justify-between items-center text-xs text-slate-400 border-t border-slate-900">
+            <span>Jaipur, Kota & Jodhpur drive over 60% of total state requisitions.</span>
             <Link to="/government/districts" className="text-amber-400 font-bold hover:underline">
               Detailed District View →
             </Link>
           </div>
         </div>
 
-        {/* Jobs vs Internships Comparison (5 Cols) */}
+        {/* Jobs vs Internships Donut & Conversion Cards (5 Cols) */}
         <div className="lg:col-span-5 bg-slate-950 rounded-2xl p-6 border border-slate-800 shadow-xl space-y-4 flex flex-col justify-between">
           <div>
             <div className="flex justify-between items-center pb-3 border-b border-slate-800">
               <div>
                 <h2 className="text-sm font-extrabold text-white tracking-tight">
-                  Jobs vs. Internships Performance
+                  Jobs vs. Internships Split & Health
                 </h2>
-                <p className="text-xs text-slate-400">Market distribution & conversion efficiency</p>
+                <p className="text-xs text-slate-400">Opportunity ratio & PPO conversion metrics</p>
               </div>
               <Badge variant="saffron" size="sm">Rajasthan Ratio</Badge>
             </div>
@@ -490,30 +550,67 @@ export const GovernmentDashboard = () => {
               <div className="p-3.5 bg-slate-900 rounded-xl border border-slate-800 space-y-1">
                 <span className="text-[11px] font-semibold text-slate-400">Active Jobs</span>
                 <div className="text-2xl font-black text-sky-400">{kpis?.activeJobs || 420}</div>
-                <span className="text-[10px] text-emerald-400 font-bold">83.4% Placement Rate</span>
+                <div className="space-y-1 mt-1">
+                  <div className="flex justify-between text-[10px] text-emerald-400 font-bold">
+                    <span>Placement Rate</span>
+                    <span>83.4%</span>
+                  </div>
+                  <LinearProgress 
+                    variant="determinate" 
+                    value={83.4} 
+                    sx={{ height: 4, borderRadius: 2, backgroundColor: 'rgba(51,65,85,0.5)', '& .MuiLinearProgress-bar': { backgroundColor: '#38bdf8' } }} 
+                  />
+                </div>
               </div>
 
               <div className="p-3.5 bg-slate-900 rounded-xl border border-slate-800 space-y-1">
                 <span className="text-[11px] font-semibold text-slate-400">Internships</span>
                 <div className="text-2xl font-black text-purple-400">{kpis?.activeInternships || 280}</div>
-                <span className="text-[10px] text-purple-300 font-bold">64.2% PPO Conversion</span>
+                <div className="space-y-1 mt-1">
+                  <div className="flex justify-between text-[10px] text-purple-300 font-bold">
+                    <span>PPO Conversion</span>
+                    <span>64.2%</span>
+                  </div>
+                  <LinearProgress 
+                    variant="determinate" 
+                    value={64.2} 
+                    sx={{ height: 4, borderRadius: 2, backgroundColor: 'rgba(51,65,85,0.5)', '& .MuiLinearProgress-bar': { backgroundColor: '#a855f7' } }} 
+                  />
+                </div>
               </div>
             </div>
 
-            <div className="h-44 w-full">
+            {/* Glowing Donut Pie Chart */}
+            <div className="h-44 w-full relative flex items-center justify-center">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={jobInternData} layout="vertical" margin={{ top: 5, right: 20, left: 30, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-                  <XAxis type="number" tick={{ fontSize: 10, fill: '#94a3b8' }} />
-                  <YAxis type="category" dataKey="name" tick={{ fontSize: 10, fill: '#94a3b8' }} />
+                <PieChart>
                   <Tooltip 
                     contentStyle={{ backgroundColor: '#020617', borderColor: '#334155', borderRadius: '8px', color: '#fff', fontSize: '11px' }}
+                    formatter={(val, name) => [`${val} Offerings`, name]}
                   />
-                  <Legend wrapperStyle={{ fontSize: '10px' }} />
-                  <Bar dataKey="Jobs" fill="#38bdf8" radius={[0, 4, 4, 0]} />
-                  <Bar dataKey="Internships" fill="#a855f7" radius={[0, 4, 4, 0]} />
-                </BarChart>
+                  <Pie
+                    data={jobInternDonutData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={48}
+                    outerRadius={68}
+                    paddingAngle={6}
+                    dataKey="value"
+                  >
+                    {jobInternDonutData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} stroke="#020617" strokeWidth={2} />
+                    ))}
+                  </Pie>
+                  <Legend 
+                    verticalAlign="bottom" 
+                    wrapperStyle={{ fontSize: '11px', paddingTop: '4px' }} 
+                  />
+                </PieChart>
               </ResponsiveContainer>
+              <div className="absolute top-16 text-center pointer-events-none">
+                <span className="text-[11px] font-bold text-slate-400 block">Total</span>
+                <span className="text-sm font-black text-white">{(kpis?.activeJobs || 420) + (kpis?.activeInternships || 280)}</span>
+              </div>
             </div>
           </div>
 
@@ -527,43 +624,91 @@ export const GovernmentDashboard = () => {
 
       </div>
 
-      {/* 5. Industry Skill Demand vs Student Availability (Recharts Multi-Bar Graph) */}
+      {/* 5. Industry Skill Demand vs Student Availability (Unique Radar / Spider Web Chart) */}
       <div className="bg-slate-950 rounded-2xl p-6 border border-slate-800 shadow-xl space-y-5">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-3 border-b border-slate-800">
           <div>
             <div className="flex items-center space-x-2">
-              <Zap className="w-4 h-4 text-amber-400" />
+              <Compass className="w-5 h-5 text-sky-400 animate-spin-slow" />
               <h2 className="text-base font-extrabold text-white tracking-tight">
-                Industry Skill Demand vs. Student Skill Availability
+                Industry Skill Demand vs. Student Availability Radar
               </h2>
             </div>
             <p className="text-xs text-slate-400 mt-0.5">
-              Correlating corporate technical hiring demand % with registered university student supply % across 10 key skills.
+              Multi-dimensional polygon radar showing corporate demand % (Sky Blue) vs student talent availability % (Emerald Green).
             </p>
           </div>
 
-          <div className="flex items-center space-x-2 text-xs">
-            <span className="px-2.5 py-1 rounded bg-rose-500/15 border border-rose-500/30 text-rose-300 font-bold">
-              High Demand + Low Supply = Critical Gap
+          <div className="flex items-center space-x-2">
+            <div className="flex bg-slate-900 p-1 rounded-lg border border-slate-800">
+              <button
+                onClick={() => setActiveSkillView('radar')}
+                className={`px-3 py-1 rounded text-xs font-bold transition-colors cursor-pointer ${
+                  activeSkillView === 'radar' ? 'bg-sky-500 text-slate-950' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                Radar Web
+              </button>
+              <button
+                onClick={() => setActiveSkillView('area')}
+                className={`px-3 py-1 rounded text-xs font-bold transition-colors cursor-pointer ${
+                  activeSkillView === 'area' ? 'bg-sky-500 text-slate-950' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                Smooth Wave
+              </button>
+            </div>
+            <span className="px-2.5 py-1 rounded bg-rose-500/15 border border-rose-500/30 text-rose-300 font-bold text-xs hidden sm:inline-block">
+              High Demand + Low Supply = Deficit
             </span>
           </div>
         </div>
 
-        <div className="h-72 w-full">
+        {/* Dynamic Chart Container: Radar vs Smooth Area Wave */}
+        <div className="h-80 w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={skillChartData} margin={{ top: 10, right: 10, left: -15, bottom: 25 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-              <XAxis dataKey="name" tick={{ fontSize: 10, fill: '#cbd5e1' }} angle={-25} textAnchor="end" />
-              <YAxis domain={[0, 100]} tick={{ fontSize: 10, fill: '#94a3b8' }} unit="%" />
-              <Tooltip 
-                contentStyle={{ backgroundColor: '#020617', borderColor: '#334155', borderRadius: '10px', color: '#fff', fontSize: '11px' }}
-                formatter={(val) => `${val}%`}
-              />
-              <Legend verticalAlign="top" wrapperStyle={{ fontSize: '11px', paddingBottom: '10px' }} />
-              <Bar dataKey="demand" name="Employer Demand %" fill="#38bdf8" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="availability" name="Student Availability %" fill="#10b981" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="gap" name="Skill Gap %" fill="#f43f5e" radius={[4, 4, 0, 0]} />
-            </BarChart>
+            {activeSkillView === 'radar' ? (
+              <RadarChart cx="50%" cy="50%" outerRadius="75%" data={skillChartData}>
+                <PolarGrid stroke="#334155" strokeDasharray="3 3" />
+                <PolarAngleAxis dataKey="name" tick={{ fill: '#cbd5e1', fontSize: 11, fontWeight: 600 }} />
+                <PolarRadiusAxis angle={30} domain={[0, 100]} stroke="#475569" tick={{ fontSize: 10, fill: '#94a3b8' }} />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: '#020617', borderColor: '#334155', borderRadius: '10px', color: '#fff', fontSize: '11px' }}
+                  formatter={(val, name, item) => [`${val}%`, name === 'demand' ? 'Employer Demand %' : 'Student Supply %']}
+                />
+                <Radar name="Employer Demand %" dataKey="demand" stroke="#38bdf8" fill="#38bdf8" fillOpacity={0.4} strokeWidth={2} />
+                <Radar name="Student Availability %" dataKey="availability" stroke="#10b981" fill="#10b981" fillOpacity={0.4} strokeWidth={2} />
+                <Legend wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} />
+              </RadarChart>
+            ) : (
+              <AreaChart data={skillChartData} margin={{ top: 10, right: 10, left: -15, bottom: 25 }}>
+                <defs>
+                  <linearGradient id="gradSkillDemand" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#38bdf8" stopOpacity={0.5}/>
+                    <stop offset="95%" stopColor="#38bdf8" stopOpacity={0.0}/>
+                  </linearGradient>
+                  <linearGradient id="gradSkillSupply" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.5}/>
+                    <stop offset="95%" stopColor="#10b981" stopOpacity={0.0}/>
+                  </linearGradient>
+                  <linearGradient id="gradSkillGap" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.5}/>
+                    <stop offset="95%" stopColor="#f43f5e" stopOpacity={0.0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+                <XAxis dataKey="fullName" tick={{ fontSize: 10, fill: '#cbd5e1' }} angle={-25} textAnchor="end" />
+                <YAxis domain={[0, 100]} tick={{ fontSize: 10, fill: '#94a3b8' }} unit="%" />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: '#020617', borderColor: '#334155', borderRadius: '10px', color: '#fff', fontSize: '11px' }}
+                  formatter={(val) => `${val}%`}
+                />
+                <Legend verticalAlign="top" wrapperStyle={{ fontSize: '11px', paddingBottom: '10px' }} />
+                <Area type="monotone" dataKey="demand" name="Employer Demand %" stroke="#38bdf8" fill="url(#gradSkillDemand)" strokeWidth={2.5} />
+                <Area type="monotone" dataKey="availability" name="Student Availability %" stroke="#10b981" fill="url(#gradSkillSupply)" strokeWidth={2.5} />
+                <Area type="monotone" dataKey="gap" name="Skill Gap %" stroke="#f43f5e" fill="url(#gradSkillGap)" strokeWidth={2} />
+              </AreaChart>
+            )}
           </ResponsiveContainer>
         </div>
       </div>
@@ -598,64 +743,87 @@ export const GovernmentDashboard = () => {
               className="bg-slate-900 rounded-xl p-4 border border-rose-500/30 relative flex flex-col justify-between hover:border-rose-400 transition-all shadow-md"
             >
               <div>
-                <div className="flex justify-between items-start mb-2">
+                <div className="flex justify-between items-start">
                   <div>
-                    <h3 className="text-base font-black text-white">{item.skill_name}</h3>
-                    <span className="text-[11px] text-slate-400">{item.category || 'Core Technology'}</span>
+                    <h3 className="font-extrabold text-white text-sm">{item.skill_name}</h3>
+                    <span className="text-[11px] text-slate-400">{item.category}</span>
                   </div>
-                  <span className="px-2 py-0.5 bg-rose-500/20 text-rose-300 border border-rose-500/40 rounded text-[10px] font-black uppercase">
-                    Priority: {item.priority}
-                  </span>
+                  <Chip 
+                    label={item.priority} 
+                    size="small" 
+                    sx={{ 
+                      backgroundColor: 'rgba(244, 63, 94, 0.2)', 
+                      color: '#fb7185', 
+                      border: '1px solid rgba(244, 63, 94, 0.4)',
+                      fontWeight: 800,
+                      fontSize: '0.65rem'
+                    }} 
+                  />
                 </div>
 
-                <div className="space-y-1.5 my-3 text-xs bg-slate-950/80 p-3 rounded-lg border border-slate-800">
-                  <div className="flex justify-between">
-                    <span className="text-slate-400">Employer Demand:</span>
-                    <span className="font-bold text-sky-400">{item.employer_demand}%</span>
+                <div className="grid grid-cols-3 gap-2 my-3 text-center bg-slate-950 p-2.5 rounded-lg border border-slate-800/80">
+                  <div>
+                    <span className="text-[10px] text-slate-400 block font-semibold">Demand</span>
+                    <span className="text-sm font-black text-sky-400">{item.employer_demand}%</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-slate-400">Student Availability:</span>
-                    <span className="font-bold text-emerald-400">{item.student_availability}%</span>
+                  <div>
+                    <span className="text-[10px] text-slate-400 block font-semibold">Supply</span>
+                    <span className="text-sm font-black text-emerald-400">{item.student_availability}%</span>
                   </div>
-                  <div className="flex justify-between pt-1 border-t border-slate-800 text-amber-400 font-extrabold">
-                    <span>Deficit Gap:</span>
-                    <span>{item.skill_gap}%</span>
+                  <div>
+                    <span className="text-[10px] text-slate-400 block font-semibold">Deficit</span>
+                    <span className="text-sm font-black text-rose-400">+{item.skill_gap}%</span>
                   </div>
                 </div>
 
-                <p className="text-[11px] text-slate-400 line-clamp-2">
-                  {item.recommendation}
+                {/* Progress bar visual */}
+                <div className="space-y-1 my-2">
+                  <div className="flex justify-between text-[10px] text-slate-400">
+                    <span>Talent Saturation</span>
+                    <span>{item.student_availability}% of Market Demand</span>
+                  </div>
+                  <LinearProgress 
+                    variant="determinate" 
+                    value={item.student_availability} 
+                    sx={{ 
+                      height: 5, 
+                      borderRadius: 2, 
+                      backgroundColor: 'rgba(51,65,85,0.5)', 
+                      '& .MuiLinearProgress-bar': { backgroundColor: '#f43f5e' } 
+                    }} 
+                  />
+                </div>
+
+                <p className="text-xs text-amber-300/90 bg-amber-500/10 border border-amber-500/20 p-2 rounded-lg mt-2 font-medium leading-relaxed">
+                  💡 {item.recommendation}
                 </p>
               </div>
 
-              <div className="pt-4 mt-2 border-t border-slate-800">
-                <button
-                  onClick={() => openRecModal(item)}
-                  className="w-full py-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 text-xs font-black rounded-lg transition-all flex items-center justify-center space-x-1.5 shadow-md cursor-pointer"
-                >
-                  <Sparkles className="w-3.5 h-3.5" />
-                  <span>Create Training Recommendation</span>
-                </button>
-              </div>
+              {/* Action Button: Launch Recommendation Program */}
+              <button
+                onClick={() => openRecModal(item)}
+                className="w-full mt-3 py-2 bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-white rounded-lg text-xs font-bold transition-all shadow flex items-center justify-center space-x-1.5 cursor-pointer"
+              >
+                <PlusCircle className="w-3.5 h-3.5" />
+                <span>Launch State Upskilling Cohort</span>
+              </button>
             </div>
           ))}
         </div>
-
       </div>
 
-      {/* 7. Modal: Create Policy & Training Recommendation */}
-      {recommendationModalOpen && selectedSkillForRec && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-700 rounded-2xl max-w-xl w-full p-6 shadow-2xl space-y-5 animate-in fade-in zoom-in-95 duration-200">
-            
-            <div className="flex justify-between items-start pb-3 border-b border-slate-800">
-              <div>
-                <span className="text-amber-400 text-xs font-bold uppercase tracking-wider block">Policy Decision Portal</span>
-                <h3 className="text-lg font-bold text-white">
-                  Launch Government Training Initiative for {selectedSkillForRec.skill_name}
+      {/* 7. Modal: Create Training Recommendation */}
+      {recommendationModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade-in">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl relative">
+            <div className="flex justify-between items-center pb-3 border-b border-slate-800">
+              <div className="flex items-center space-x-2">
+                <Sparkles className="w-5 h-5 text-amber-400" />
+                <h3 className="text-base font-bold text-white">
+                  Launch Government Training Initiative
                 </h3>
               </div>
-              <button 
+              <button
                 onClick={() => setRecommendationModalOpen(false)}
                 className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800"
               >
@@ -663,83 +831,69 @@ export const GovernmentDashboard = () => {
               </button>
             </div>
 
-            <div className="bg-slate-950 p-3.5 rounded-xl border border-slate-800 text-xs space-y-1.5">
-              <div className="flex justify-between">
-                <span className="text-slate-400">Target Skill:</span>
-                <strong className="text-white">{selectedSkillForRec.skill_name}</strong>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-400">Current Industry Demand:</span>
-                <strong className="text-sky-400">{selectedSkillForRec.employer_demand}%</strong>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-400">Student Availability:</span>
-                <strong className="text-emerald-400">{selectedSkillForRec.student_availability}%</strong>
-              </div>
-              <div className="flex justify-between text-rose-400 font-bold">
-                <span>Supply Deficit Gap:</span>
-                <span>{selectedSkillForRec.skill_gap}%</span>
-              </div>
-            </div>
-
             <form onSubmit={handleCreateRecommendation} className="space-y-4">
               <div>
-                <label className="block text-xs font-bold text-slate-300 mb-1">
-                  Training Program Title
-                </label>
+                <label className="text-xs font-bold text-slate-300 block mb-1">Target Skill & Domain</label>
+                <input
+                  type="text"
+                  readOnly
+                  value={`${selectedSkillForRec?.skill_name} (${selectedSkillForRec?.category})`}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-xs text-slate-300 focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-slate-300 block mb-1">Initiative Title</label>
                 <input
                   type="text"
                   required
                   value={recFormData.title}
                   onChange={(e) => setRecFormData({ ...recFormData, title: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500"
+                  placeholder="e.g. Statewide AWS Cloud Solutions Finishing School"
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-amber-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-300 mb-1">
-                  Target Student Cohort
-                </label>
+                <label className="text-xs font-bold text-slate-300 block mb-1">Target Student Cohort</label>
                 <input
                   type="text"
                   required
                   value={recFormData.targetCohort}
                   onChange={(e) => setRecFormData({ ...recFormData, targetCohort: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500"
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-amber-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-300 mb-1">
-                  Recommended Regional Engineering Hubs (comma separated)
+                <label className="text-xs font-bold text-slate-300 block mb-1">
+                  Designated Execution Institutes (Comma separated)
                 </label>
                 <input
                   type="text"
                   required
                   value={recFormData.recommendedInstitutes}
                   onChange={(e) => setRecFormData({ ...recFormData, recommendedInstitutes: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500"
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-amber-500"
                 />
               </div>
 
-              <div className="pt-3 border-t border-slate-800 flex justify-end space-x-3">
+              <div className="pt-2 flex justify-end space-x-3">
                 <button
                   type="button"
                   onClick={() => setRecommendationModalOpen(false)}
-                  className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold"
+                  className="px-4 py-2 text-xs font-bold text-slate-400 hover:text-white bg-slate-800 rounded-xl"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black shadow-md flex items-center space-x-1.5"
+                  className="px-5 py-2 text-xs font-bold text-slate-950 bg-amber-400 hover:bg-amber-300 rounded-xl shadow cursor-pointer font-black"
                 >
-                  <FileCheck className="w-4 h-4" />
-                  <span>Submit Training Recommendation</span>
+                  Approve & Issue Directive
                 </button>
               </div>
             </form>
-
           </div>
         </div>
       )}

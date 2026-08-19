@@ -11,15 +11,16 @@ import {
   Search,
   CheckCircle2,
   Briefcase,
-  PieChart as PieIcon,
   Award,
   Sparkles,
   Layers,
-  ArrowUpRight
+  ArrowUpRight,
+  Compass,
+  Zap,
+  Activity,
+  Gauge
 } from 'lucide-react';
 import { 
-  BarChart, 
-  Bar, 
   XAxis, 
   YAxis, 
   Tooltip, 
@@ -27,38 +28,44 @@ import {
   CartesianGrid, 
   Cell, 
   Legend,
-  PieChart,
-  Pie,
   AreaChart,
-  Area
+  Area,
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis,
+  Radar,
+  RadialBarChart,
+  RadialBar,
+  PieChart,
+  Pie
 } from 'recharts';
+import { Chip, LinearProgress, Tooltip as MuiTooltip } from '@mui/material';
 import { governmentApi } from '../../api/governmentApi';
 import { Badge } from '../../components/common/Badge';
 import { SkeletonLoader } from '../../components/common/SkeletonLoader';
 import toast from 'react-hot-toast';
 
 const DISTRICT_COLORS = [
-  '#3b82f6', // Jaipur (Blue)
-  '#10b981', // Jodhpur (Emerald)
-  '#f59e0b', // Kota (Amber)
-  '#8b5cf6', // Udaipur (Purple)
-  '#ec4899', // Ajmer (Pink)
-  '#06b6d4', // Bikaner (Cyan)
-  '#f97316', // Alwar (Orange)
-  '#14b8a6'  // Sikar (Teal)
+  '#38bdf8', // Sky Blue
+  '#818cf8', // Indigo
+  '#34d399', // Emerald
+  '#f59e0b', // Amber
+  '#c084fc', // Purple
+  '#f43f5e', // Rose
+  '#06b6d4', // Cyan
+  '#fb923c'  // Orange
 ];
 
-const OPPORTUNITY_TYPE_COLORS = ['#38bdf8', '#a855f7', '#10b981'];
-
 const DEFAULT_DISTRICTS = [
-  { id: 1, district: 'Jaipur', total_students: 5240, total_employers: 320, total_jobs: 1240, total_internships: 480, total_applications: 6430, total_placements: 720, placement_rate: 85.20 },
-  { id: 2, district: 'Jodhpur', total_students: 3100, total_employers: 190, total_jobs: 720, total_internships: 310, total_applications: 4210, total_placements: 510, placement_rate: 82.40 },
-  { id: 3, district: 'Kota', total_students: 3800, total_employers: 210, total_jobs: 850, total_internships: 390, total_applications: 5100, total_placements: 590, placement_rate: 83.60 },
-  { id: 4, district: 'Udaipur', total_students: 2600, total_employers: 150, total_jobs: 580, total_internships: 250, total_applications: 3420, total_placements: 420, placement_rate: 81.30 },
-  { id: 5, district: 'Ajmer', total_students: 2200, total_employers: 130, total_jobs: 470, total_internships: 210, total_applications: 2890, total_placements: 350, placement_rate: 79.80 },
-  { id: 6, district: 'Bikaner', total_students: 1800, total_employers: 100, total_jobs: 360, total_internships: 160, total_applications: 2210, total_placements: 270, placement_rate: 78.50 },
-  { id: 7, district: 'Alwar', total_students: 2400, total_employers: 140, total_jobs: 520, total_internships: 220, total_applications: 3050, total_placements: 380, placement_rate: 80.40 },
-  { id: 8, district: 'Sikar', total_students: 2100, total_employers: 120, total_jobs: 440, total_internships: 190, total_applications: 2760, total_placements: 330, placement_rate: 79.20 }
+  { id: 1, district: 'Jaipur', total_students: 5840, total_employers: 345, total_jobs: 1420, total_internships: 580, total_applications: 7250, total_placements: 890, placement_rate: 86.40, talent_score: 94 },
+  { id: 2, district: 'Jodhpur', total_students: 3420, total_employers: 210, total_jobs: 820, total_internships: 360, total_applications: 4650, total_placements: 610, placement_rate: 83.20, talent_score: 88 },
+  { id: 3, district: 'Kota', total_students: 4150, total_employers: 235, total_jobs: 940, total_internships: 430, total_applications: 5600, total_placements: 720, placement_rate: 84.80, talent_score: 91 },
+  { id: 4, district: 'Udaipur', total_students: 2890, total_employers: 168, total_jobs: 640, total_internships: 290, total_applications: 3820, total_placements: 480, placement_rate: 82.10, talent_score: 84 },
+  { id: 5, district: 'Ajmer', total_students: 2450, total_employers: 142, total_jobs: 510, total_internships: 230, total_applications: 3180, total_placements: 390, placement_rate: 80.50, talent_score: 81 },
+  { id: 6, district: 'Bikaner', total_students: 1980, total_employers: 115, total_jobs: 410, total_internships: 180, total_applications: 2540, total_placements: 310, placement_rate: 79.10, talent_score: 78 },
+  { id: 7, district: 'Alwar', total_students: 2650, total_employers: 158, total_jobs: 580, total_internships: 260, total_applications: 3410, total_placements: 440, placement_rate: 81.30, talent_score: 83 },
+  { id: 8, district: 'Sikar', total_students: 2280, total_employers: 130, total_jobs: 480, total_internships: 210, total_applications: 2980, total_placements: 360, placement_rate: 79.90, talent_score: 80 }
 ];
 
 export const DistrictIntelligence = () => {
@@ -66,6 +73,7 @@ export const DistrictIntelligence = () => {
   const [loading, setLoading] = useState(false);
   const [selectedDistrictFilter, setSelectedDistrictFilter] = useState('ALL');
   const [searchTerm, setSearchTerm] = useState('');
+  const [chartViewMode, setChartViewMode] = useState('stream'); // 'stream' | 'radar'
 
   useEffect(() => {
     fetchDistricts();
@@ -108,24 +116,25 @@ export const DistrictIntelligence = () => {
     return d.district.toLowerCase().includes(searchTerm.toLowerCase());
   });
 
-  // Data for Charts
+  // Data for Stream Area & Line Charts
   const chartData = filteredDistricts.map((d, index) => ({
     name: d.district,
-    rate: d.placement_rate,
+    rate: Number(d.placement_rate),
     students: d.total_students,
     employers: d.total_employers,
     jobs: d.total_jobs,
     internships: d.total_internships,
     placements: d.total_placements,
     applications: d.total_applications,
+    talentScore: d.talent_score || Math.round(d.placement_rate * 1.08),
     color: DISTRICT_COLORS[index % DISTRICT_COLORS.length]
   }));
 
-  // Pie chart data: Student population by district
-  const studentDistributionData = filteredDistricts.map((d, index) => ({
+  // Concentric Radial Bar Rings Data (Apple Fitness style)
+  const radialRingsData = filteredDistricts.slice(0, 6).map((d, index) => ({
     name: d.district,
-    value: d.total_students,
-    color: DISTRICT_COLORS[index % DISTRICT_COLORS.length]
+    score: d.placement_rate,
+    fill: DISTRICT_COLORS[index % DISTRICT_COLORS.length]
   }));
 
   // Aggregated sums
@@ -138,105 +147,125 @@ export const DistrictIntelligence = () => {
     ? (districts.reduce((acc, d) => acc + (d.placement_rate || 0), 0) / districts.length).toFixed(1)
     : '0.0';
 
-  // Pie chart data: Total opportunities breakdown (Jobs vs Internships vs Placements)
-  const opportunityBreakdownData = [
-    { name: 'Full-Time Jobs', value: totalJobs, color: '#38bdf8' },
-    { name: 'Internships', value: totalInternships, color: '#a855f7' },
-    { name: 'Direct Placements', value: totalPlacements, color: '#10b981' }
+  // Speedometer Gauge Data for Macro State Placement Rate
+  const gaugeValue = parseFloat(avgPlacementRate) || 82.5;
+  const gaugeData = [
+    { name: 'Achieved', value: gaugeValue, color: '#10b981' },
+    { name: 'Gap to Target', value: Math.max(0, 100 - gaugeValue), color: '#1e293b' }
+  ];
+
+  // Radar multi-dimensional comparison for top 5 clusters
+  const radarClusterData = [
+    { metric: 'Placement %', Jaipur: 86.4, Jodhpur: 83.2, Kota: 84.8, Udaipur: 82.1, Sikar: 79.9 },
+    { metric: 'Talent Density', Jaipur: 94, Jodhpur: 88, Kota: 91, Udaipur: 84, Sikar: 80 },
+    { metric: 'Employer Demand', Jaipur: 92, Jodhpur: 78, Kota: 85, Udaipur: 70, Sikar: 65 },
+    { metric: 'Tech Internships', Jaipur: 88, Jodhpur: 74, Kota: 82, Udaipur: 68, Sikar: 62 },
+    { metric: 'Job Requisitions', Jaipur: 95, Jodhpur: 80, Kota: 86, Udaipur: 72, Sikar: 66 }
   ];
 
   return (
     <div className="space-y-6 text-slate-100 pb-10 font-sans">
       
-      {/* Top Banner */}
-      <div className="bg-slate-950 rounded-2xl p-6 sm:p-7 border border-slate-800 shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      {/* 1. Header with Credentials & Quick Stats */}
+      <div className="bg-slate-950 rounded-2xl p-6 border border-slate-800 shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <div className="flex items-center space-x-2 text-amber-400 text-xs font-bold uppercase tracking-wider mb-1">
-            <MapPin className="w-4 h-4" />
-            <span>State Employment Authority • Geographic Intelligence</span>
+          <div className="flex flex-wrap items-center gap-2 mb-2">
+            <span className="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-black uppercase tracking-wider">
+              <MapPin className="w-3.5 h-3.5" />
+              <span>Rajasthan Regional Analytics</span>
+            </span>
+            <Chip 
+              label="8 Key Industrial Clusters" 
+              size="small" 
+              sx={{ backgroundColor: 'rgba(56, 189, 248, 0.15)', color: '#38bdf8', border: '1px solid rgba(56, 189, 248, 0.3)', fontWeight: 700, fontSize: '0.7rem' }} 
+            />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-white">
-            Rajasthan District Employment & Skill Analytics
+          <h1 className="text-2xl font-black tracking-tight text-white">
+            District-Level Employment & Skill Density Radar
           </h1>
           <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-3xl">
-            Live monitoring of student cohorts, employer demand clusters, opportunity requisitions, and placement benchmarks across Rajasthan districts.
+            Granular territorial intelligence evaluating talent availability, industrial hiring demand, and placement outcomes across all 8 divisional nodes of Rajasthan.
           </p>
         </div>
 
         <button
           onClick={handleExportCSV}
-          className="px-4 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black rounded-xl border border-amber-400/40 flex items-center space-x-2 transition-all shadow-md cursor-pointer shrink-0"
+          className="px-4 py-2.5 bg-slate-900 hover:bg-slate-850 text-amber-400 border border-slate-750 rounded-xl text-xs font-black flex items-center space-x-2 transition-all shadow hover:border-amber-400/50 cursor-pointer shrink-0"
         >
           <Download className="w-4 h-4" />
           <span>Export District Data (CSV)</span>
         </button>
       </div>
 
-      {/* KPI Stats Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-slate-950 p-5 rounded-2xl border border-slate-800 shadow-md">
-          <div className="flex justify-between items-center text-slate-400 text-xs font-semibold">
-            <span>Total Enrolled Talent</span>
-            <Users className="w-4 h-4 text-blue-400" />
+      {/* 2. Key Metrics Row */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3.5">
+        
+        <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 shadow hover:border-slate-700 transition-colors">
+          <div className="flex items-center justify-between text-slate-400 mb-1">
+            <span className="text-xs font-semibold">Registered Students</span>
+            <Users className="w-3.5 h-3.5 text-sky-400" />
           </div>
-          <div className="text-2xl font-extrabold text-white mt-2 font-mono">
-            {totalStudents.toLocaleString()}
-          </div>
-          <div className="text-[11px] text-blue-400 font-medium mt-1">
-            Across 8 key district hubs
-          </div>
+          <div className="text-xl font-black text-white">{totalStudents.toLocaleString()}</div>
+          <div className="text-[10px] text-slate-500 mt-0.5">8 Key Districts</div>
         </div>
 
-        <div className="bg-slate-950 p-5 rounded-2xl border border-slate-800 shadow-md">
-          <div className="flex justify-between items-center text-slate-400 text-xs font-semibold">
-            <span>Registered Employers</span>
-            <Building2 className="w-4 h-4 text-amber-400" />
+        <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 shadow hover:border-slate-700 transition-colors">
+          <div className="flex items-center justify-between text-slate-400 mb-1">
+            <span className="text-xs font-semibold">Verified Employers</span>
+            <Building2 className="w-3.5 h-3.5 text-amber-400" />
           </div>
-          <div className="text-2xl font-extrabold text-amber-400 mt-2 font-mono">
-            {totalEmployers.toLocaleString()}
-          </div>
-          <div className="text-[11px] text-amber-300 font-medium mt-1">
-            Active verified hiring partners
-          </div>
+          <div className="text-xl font-black text-amber-400">{totalEmployers.toLocaleString()}</div>
+          <div className="text-[10px] text-slate-500 mt-0.5">Active Recruiters</div>
         </div>
 
-        <div className="bg-slate-950 p-5 rounded-2xl border border-slate-800 shadow-md">
-          <div className="flex justify-between items-center text-slate-400 text-xs font-semibold">
-            <span>Total Confirmed Placements</span>
-            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+        <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 shadow hover:border-slate-700 transition-colors">
+          <div className="flex items-center justify-between text-slate-400 mb-1">
+            <span className="text-xs font-semibold">Job Postings</span>
+            <Briefcase className="w-3.5 h-3.5 text-emerald-400" />
           </div>
-          <div className="text-2xl font-extrabold text-emerald-400 mt-2 font-mono">
-            {totalPlacements.toLocaleString()}
-          </div>
-          <div className="text-[11px] text-emerald-300 font-medium mt-1">
-            Placed in industry roles
-          </div>
+          <div className="text-xl font-black text-emerald-400">{totalJobs.toLocaleString()}</div>
+          <div className="text-[10px] text-slate-500 mt-0.5">Full-Time Requisitions</div>
         </div>
 
-        <div className="bg-slate-950 p-5 rounded-2xl border border-slate-800 shadow-md">
-          <div className="flex justify-between items-center text-slate-400 text-xs font-semibold">
-            <span>State Avg Placement Rate</span>
-            <TrendingUp className="w-4 h-4 text-purple-400" />
+        <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 shadow hover:border-slate-700 transition-colors">
+          <div className="flex items-center justify-between text-slate-400 mb-1">
+            <span className="text-xs font-semibold">Internships</span>
+            <GraduationCap className="w-3.5 h-3.5 text-purple-400" />
           </div>
-          <div className="text-2xl font-extrabold text-purple-400 mt-2 font-mono">
-            {avgPlacementRate}%
-          </div>
-          <div className="text-[11px] text-purple-300 font-medium mt-1">
-            Above 80% State Target benchmark
-          </div>
+          <div className="text-xl font-black text-purple-400">{totalInternships.toLocaleString()}</div>
+          <div className="text-[10px] text-slate-500 mt-0.5">Technical Stipends</div>
         </div>
+
+        <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 shadow hover:border-slate-700 transition-colors">
+          <div className="flex items-center justify-between text-slate-400 mb-1">
+            <span className="text-xs font-semibold">Placed Candidates</span>
+            <CheckCircle2 className="w-3.5 h-3.5 text-teal-400" />
+          </div>
+          <div className="text-xl font-black text-teal-400">{totalPlacements.toLocaleString()}</div>
+          <div className="text-[10px] text-slate-500 mt-0.5">Confirmed Hires</div>
+        </div>
+
+        <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 shadow hover:border-slate-700 transition-colors">
+          <div className="flex items-center justify-between text-slate-400 mb-1">
+            <span className="text-xs font-semibold">Avg. Placement Rate</span>
+            <TrendingUp className="w-3.5 h-3.5 text-amber-400" />
+          </div>
+          <div className="text-xl font-black text-amber-400">{avgPlacementRate}%</div>
+          <div className="text-[10px] text-emerald-400 font-bold mt-0.5">Target &gt; 80% Achieved</div>
+        </div>
+
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col sm:flex-row justify-between items-center gap-3">
         <div className="relative w-full sm:w-80">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+          <Search className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
-            placeholder="Search district name..."
+            placeholder="Search district name (e.g. Jaipur, Kota)..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-slate-900 border border-slate-700 rounded-lg pl-9 pr-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500"
+            className="w-full pl-9 pr-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-xs font-medium text-white focus:ring-1 focus:ring-amber-500 focus:outline-none"
           />
         </div>
 
@@ -245,7 +274,7 @@ export const DistrictIntelligence = () => {
           <select
             value={selectedDistrictFilter}
             onChange={(e) => setSelectedDistrictFilter(e.target.value)}
-            className="bg-slate-900 border border-slate-700 text-xs text-white rounded-lg px-3 py-2 focus:outline-none focus:border-amber-500"
+            className="bg-slate-900 border border-slate-700 text-xs text-white rounded-lg px-3 py-2 focus:outline-none focus:border-amber-500 cursor-pointer"
           >
             <option value="ALL">All 8 Key Districts</option>
             <option value="Jaipur">Jaipur</option>
@@ -260,164 +289,185 @@ export const DistrictIntelligence = () => {
         </div>
       </div>
 
-      {/* Recharts Row 1: Pie Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* Unique Visualizations Row 1: Concentric Rings & Speedometer Gauge */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-        {/* Pie Chart 1: Talent Density by District */}
-        <div className="bg-slate-950 rounded-2xl p-6 border border-slate-800 shadow-xl space-y-4">
+        {/* Apple Fitness Style Concentric Radial Rings (7 Cols) */}
+        <div className="lg:col-span-7 bg-slate-950 rounded-2xl p-6 border border-slate-800 shadow-xl space-y-4">
           <div className="flex justify-between items-center pb-3 border-b border-slate-800">
             <div>
               <div className="flex items-center space-x-2">
-                <PieIcon className="w-4 h-4 text-amber-400" />
+                <Compass className="w-4 h-4 text-sky-400 animate-spin-slow" />
                 <h2 className="text-sm font-extrabold text-white tracking-tight">
-                  Student Cohort Distribution by District
+                  District Placement Performance Rings (Concentric Radar Index)
                 </h2>
               </div>
-              <p className="text-xs text-slate-400 mt-0.5">Proportional student population registered in each region</p>
+              <p className="text-xs text-slate-400 mt-0.5">Nested radial arcs representing placement conversion % across top industrial hubs</p>
             </div>
-            <Badge variant="blue" size="sm">Talent Share</Badge>
+            <Badge variant="blue" size="sm">Multi-Ring Index</Badge>
           </div>
 
-          <div className="h-72 w-full">
+          <div className="h-80 w-full relative flex items-center justify-center">
             <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={studentDistributionData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={65}
-                  outerRadius={95}
-                  paddingAngle={3}
-                  dataKey="value"
-                  label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
-                  labelLine={false}
-                >
-                  {studentDistributionData.map((entry, index) => (
-                    <Cell key={`slice-${index}`} fill={entry.color} stroke="#020617" strokeWidth={2} />
-                  ))}
-                </Pie>
-                <Tooltip 
-                  contentStyle={{ backgroundColor: '#020617', borderColor: '#334155', borderRadius: '10px', color: '#fff', fontSize: '12px' }}
-                  formatter={(val) => [`${val.toLocaleString()} Students`, 'Cohort Size']}
+              <RadialBarChart 
+                cx="50%" 
+                cy="50%" 
+                innerRadius="20%" 
+                outerRadius="95%" 
+                barSize={12} 
+                data={radialRingsData}
+                startAngle={90}
+                endAngle={-270}
+              >
+                <RadialBar
+                  minAngle={15}
+                  background={{ fill: '#1e293b' }}
+                  clockWise
+                  dataKey="score"
+                  cornerRadius={6}
                 />
-                <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }} />
-              </PieChart>
+                <Tooltip 
+                  contentStyle={{ backgroundColor: '#020617', borderColor: '#334155', borderRadius: '10px', color: '#fff', fontSize: '11px' }}
+                  formatter={(val, name, entry) => [`${val}% Placement Rate`, entry.payload.name]}
+                />
+                <Legend 
+                  iconSize={10} 
+                  layout="vertical" 
+                  verticalAlign="middle" 
+                  align="right"
+                  wrapperStyle={{ fontSize: '11px', color: '#cbd5e1' }}
+                />
+              </RadialBarChart>
             </ResponsiveContainer>
+            
+            {/* Center Trophy Badge */}
+            <div className="absolute top-1/2 left-[38%] -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none hidden sm:block">
+              <Award className="w-6 h-6 text-amber-400 mx-auto animate-bounce" />
+              <span className="text-[10px] font-black text-white block mt-0.5">TOP HUB</span>
+              <span className="text-xs font-bold text-sky-400">Jaipur</span>
+            </div>
           </div>
         </div>
 
-        {/* Pie Chart 2: Opportunities & Placements Breakdown */}
-        <div className="bg-slate-950 rounded-2xl p-6 border border-slate-800 shadow-xl space-y-4">
-          <div className="flex justify-between items-center pb-3 border-b border-slate-800">
-            <div>
-              <div className="flex items-center space-x-2">
-                <Briefcase className="w-4 h-4 text-emerald-400" />
-                <h2 className="text-sm font-extrabold text-white tracking-tight">
-                  State Opportunity Volume & Placement Share
-                </h2>
-              </div>
-              <p className="text-xs text-slate-400 mt-0.5">Ratio of full-time jobs, internships, and confirmed hires</p>
-            </div>
-            <Badge variant="saffron" size="sm">Opportunity Mix</Badge>
-          </div>
-
-          <div className="h-72 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={opportunityBreakdownData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={65}
-                  outerRadius={95}
-                  paddingAngle={4}
-                  dataKey="value"
-                  label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
-                  labelLine={false}
-                >
-                  {opportunityBreakdownData.map((entry, index) => (
-                    <Cell key={`opp-${index}`} fill={entry.color} stroke="#020617" strokeWidth={2} />
-                  ))}
-                </Pie>
-                <Tooltip 
-                  contentStyle={{ backgroundColor: '#020617', borderColor: '#334155', borderRadius: '10px', color: '#fff', fontSize: '12px' }}
-                  formatter={(val) => [`${val.toLocaleString()} Positions`, 'Volume']}
-                />
-                <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }} />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-      </div>
-
-      {/* Recharts Row 2: Bar Chart - Placement Rate Comparison */}
-      <div className="bg-slate-950 rounded-2xl p-6 border border-slate-800 shadow-xl space-y-4">
-        <div className="flex justify-between items-center pb-3 border-b border-slate-800">
+        {/* Speedometer Arc Gauge & Conversion Health (5 Cols) */}
+        <div className="lg:col-span-5 bg-slate-950 rounded-2xl p-6 border border-slate-800 shadow-xl space-y-4 flex flex-col justify-between">
           <div>
-            <div className="flex items-center space-x-2">
-              <TrendingUp className="w-4 h-4 text-amber-400" />
-              <h2 className="text-sm font-extrabold text-white tracking-tight">
-                District-Wise Placement Rate Comparison (%)
-              </h2>
+            <div className="flex justify-between items-center pb-3 border-b border-slate-800">
+              <div>
+                <div className="flex items-center space-x-2">
+                  <Gauge className="w-4 h-4 text-emerald-400" />
+                  <h2 className="text-sm font-extrabold text-white tracking-tight">
+                    Macro State Placement Gauge
+                  </h2>
+                </div>
+                <p className="text-xs text-slate-400 mt-0.5">Composite statewide recruitment conversion speed</p>
+              </div>
+              <Badge variant="saffron" size="sm">State Target: 80%</Badge>
             </div>
-            <p className="text-xs text-slate-400 mt-0.5">Target Benchmark: 80% • Green: ≥82%, Amber: 80-81.9%, Rose: &lt;80%</p>
-          </div>
-          <Badge variant="saffron" size="sm">Regional Benchmark</Badge>
-        </div>
 
-        <div className="h-72 w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData} margin={{ top: 10, right: 10, left: -15, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-              <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#cbd5e1' }} />
-              <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: '#94a3b8' }} unit="%" />
-              <Tooltip 
-                contentStyle={{ backgroundColor: '#020617', borderColor: '#334155', borderRadius: '10px', color: '#fff', fontSize: '11px' }}
-                formatter={(val) => [`${val}%`, 'Placement Rate']}
-              />
-              <Bar dataKey="rate" name="Placement Rate (%)" radius={[6, 6, 0, 0]}>
-                {chartData.map((entry, index) => (
-                  <Cell 
-                    key={`cell-${index}`} 
-                    fill={entry.rate >= 82 ? '#10b981' : entry.rate >= 80 ? '#f59e0b' : '#f43f5e'} 
+            {/* Speedometer Half-Pie Arc */}
+            <div className="h-48 w-full relative flex items-center justify-center">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={gaugeData}
+                    cx="50%"
+                    cy="80%"
+                    startAngle={180}
+                    endAngle={0}
+                    innerRadius={70}
+                    outerRadius={95}
+                    paddingAngle={4}
+                    dataKey="value"
+                  >
+                    <Cell fill="#10b981" />
+                    <Cell fill="#1e293b" />
+                  </Pie>
+                  <Tooltip 
+                    contentStyle={{ backgroundColor: '#020617', borderColor: '#334155', borderRadius: '10px', color: '#fff', fontSize: '11px' }}
+                    formatter={(val) => [`${val}%`, 'Value']}
                   />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
+                </PieChart>
+              </ResponsiveContainer>
+
+              <div className="absolute top-28 text-center pointer-events-none">
+                <span className="text-3xl font-black text-white block tracking-tight">{avgPlacementRate}%</span>
+                <span className="text-[11px] text-emerald-400 font-bold uppercase tracking-wider">Above Benchmark</span>
+              </div>
+            </div>
+
+            {/* Quick Metrics Breakdown */}
+            <div className="space-y-2 mt-2 bg-slate-900/80 p-3.5 rounded-xl border border-slate-800 text-xs">
+              <div className="flex justify-between">
+                <span className="text-slate-400">Jaipur Highest Rate:</span>
+                <span className="font-bold text-sky-400">86.4%</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-400">Kota Placement Rate:</span>
+                <span className="font-bold text-amber-400">84.8%</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-400">Jodhpur Placement Rate:</span>
+                <span className="font-bold text-emerald-400">83.2%</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="pt-2 text-center text-[11px] text-slate-500 font-medium">
+            All 8 regional divisional clusters operating above state statutory baseline.
+          </div>
         </div>
+
       </div>
 
-      {/* Recharts Row 3: Multi-Bar Chart - Volume Breakdown */}
+      {/* Unique Visualizations Row 2: Smooth Natural Spline Stream Flow */}
       <div className="bg-slate-950 rounded-2xl p-6 border border-slate-800 shadow-xl space-y-4">
-        <div className="flex justify-between items-center pb-3 border-b border-slate-800">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-3 border-b border-slate-800">
           <div>
             <div className="flex items-center space-x-2">
-              <BarChart3 className="w-4 h-4 text-sky-400" />
+              <Activity className="w-4 h-4 text-amber-400" />
               <h2 className="text-sm font-extrabold text-white tracking-tight">
-                District Opportunity Requisitions & Confirmed Hires
+                District Opportunities & Placements Multi-Stream Gradient Flow
               </h2>
             </div>
-            <p className="text-xs text-slate-400 mt-0.5">Comparing active full-time jobs, technical internships, and completed student placements</p>
+            <p className="text-xs text-slate-400 mt-0.5">Smooth natural spline trajectories comparing Jobs, Internships, and Confirmed Student Hires</p>
           </div>
-          <Badge variant="blue" size="sm">Volume Analysis</Badge>
+
+          <div className="flex items-center space-x-2">
+            <span className="px-2.5 py-1 rounded bg-sky-500/15 border border-sky-500/30 text-sky-300 font-bold text-xs">
+              Multi-Layer Natural Stream
+            </span>
+          </div>
         </div>
 
-        <div className="h-72 w-full">
+        <div className="h-76 w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
+            <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
+              <defs>
+                <linearGradient id="gradDistrictJobs" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#38bdf8" stopOpacity={0.45}/>
+                  <stop offset="95%" stopColor="#38bdf8" stopOpacity={0.0}/>
+                </linearGradient>
+                <linearGradient id="gradDistrictIntern" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#a855f7" stopOpacity={0.45}/>
+                  <stop offset="95%" stopColor="#a855f7" stopOpacity={0.0}/>
+                </linearGradient>
+                <linearGradient id="gradDistrictPlaced" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#10b981" stopOpacity={0.45}/>
+                  <stop offset="95%" stopColor="#10b981" stopOpacity={0.0}/>
+                </linearGradient>
+              </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
               <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#cbd5e1' }} />
               <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} />
               <Tooltip 
-                contentStyle={{ backgroundColor: '#020617', borderColor: '#334155', borderRadius: '10px', color: '#fff', fontSize: '11px' }}
+                contentStyle={{ backgroundColor: '#020617', borderColor: '#334155', borderRadius: '10px', color: '#fff', fontSize: '11px', boxShadow: '0 10px 25px rgba(0,0,0,0.5)' }}
               />
               <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '6px' }} />
-              <Bar dataKey="jobs" name="Full-Time Jobs" fill="#38bdf8" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="internships" name="Internships" fill="#a855f7" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="placements" name="Total Placements" fill="#10b981" radius={[4, 4, 0, 0]} />
-            </BarChart>
+              <Area type="natural" dataKey="jobs" name="Full-Time Jobs" stroke="#38bdf8" fill="url(#gradDistrictJobs)" strokeWidth={2.5} />
+              <Area type="natural" dataKey="internships" name="Internships" stroke="#a855f7" fill="url(#gradDistrictIntern)" strokeWidth={2.5} />
+              <Area type="natural" dataKey="placements" name="Total Placements" stroke="#10b981" fill="url(#gradDistrictPlaced)" strokeWidth={2.5} />
+            </AreaChart>
           </ResponsiveContainer>
         </div>
       </div>
@@ -431,9 +481,11 @@ export const DistrictIntelligence = () => {
             </h2>
             <p className="text-xs text-slate-400 mt-0.5">Real-time tabulated breakdown across students, industry requisitions, and outcomes</p>
           </div>
-          <span className="text-xs text-amber-400 font-bold bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/20">
-            8 Regional Clusters Active
-          </span>
+          <Chip 
+            label="8 Regional Clusters Active" 
+            size="small" 
+            sx={{ backgroundColor: 'rgba(245, 158, 11, 0.15)', color: '#fbbf24', border: '1px solid rgba(245, 158, 11, 0.3)', fontWeight: 700, fontSize: '0.7rem' }} 
+          />
         </div>
 
         <div className="overflow-x-auto">
@@ -453,29 +505,28 @@ export const DistrictIntelligence = () => {
             <tbody className="divide-y divide-slate-800/80">
               {filteredDistricts.map((d) => (
                 <tr key={d.district} className="hover:bg-slate-900/50 transition-colors">
-                  <td className="py-4 px-5 font-bold text-white text-sm">
-                    {d.district}
+                  <td className="py-3.5 px-5">
+                    <div className="font-extrabold text-white text-sm flex items-center space-x-2">
+                      <MapPin className="w-3.5 h-3.5 text-amber-400" />
+                      <span>{d.district}</span>
+                    </div>
                   </td>
-                  <td className="py-4 px-4 text-slate-300">
-                    {d.total_students?.toLocaleString()}
-                  </td>
-                  <td className="py-4 px-4 text-amber-400 font-semibold">
-                    {d.total_employers?.toLocaleString()}
-                  </td>
-                  <td className="py-4 px-4 text-sky-400 font-semibold">
-                    {d.total_jobs?.toLocaleString()}
-                  </td>
-                  <td className="py-4 px-4 text-purple-400 font-semibold">
-                    {d.total_internships?.toLocaleString()}
-                  </td>
-                  <td className="py-4 px-4 text-slate-400 font-mono">
-                    {d.total_applications?.toLocaleString()}
-                  </td>
-                  <td className="py-4 px-4 text-emerald-400 font-bold">
-                    {d.total_placements?.toLocaleString()}
-                  </td>
-                  <td className="py-4 px-5 text-right">
-                    <span className="font-black text-amber-400 text-sm">{d.placement_rate}%</span>
+                  <td className="py-3.5 px-4 text-slate-300 font-medium">{d.total_students?.toLocaleString()}</td>
+                  <td className="py-3.5 px-4 text-amber-400 font-bold">{d.total_employers?.toLocaleString()}</td>
+                  <td className="py-3.5 px-4 text-sky-400 font-bold">{d.total_jobs?.toLocaleString()}</td>
+                  <td className="py-3.5 px-4 text-purple-400 font-bold">{d.total_internships?.toLocaleString()}</td>
+                  <td className="py-3.5 px-4 text-slate-300">{d.total_applications?.toLocaleString()}</td>
+                  <td className="py-3.5 px-4 text-emerald-400 font-bold">{d.total_placements?.toLocaleString()}</td>
+                  <td className="py-3.5 px-5 text-right">
+                    <span className={`px-2.5 py-1 rounded-full text-xs font-black ${
+                      d.placement_rate >= 82 
+                        ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' 
+                        : d.placement_rate >= 80 
+                        ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' 
+                        : 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
+                    }`}>
+                      {d.placement_rate}%
+                    </span>
                   </td>
                 </tr>
               ))}

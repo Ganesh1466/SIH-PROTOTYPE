@@ -1,18 +1,25 @@
 import React, { useState } from 'react';
-import { Outlet, NavLink, Link, useNavigate, useLocation } from 'react-router-dom';
+import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { 
   Landmark, 
   LayoutDashboard, 
-  MapPin, 
-  Zap, 
-  GraduationCap, 
+  Building2, 
+  Briefcase, 
+  Users, 
+  FileText, 
   BarChart3, 
+  Zap, 
+  MapPin, 
+  Bell, 
+  Download, 
+  Settings, 
+  LogOut, 
   Menu, 
   X, 
-  LogOut, 
   ChevronRight, 
   ShieldCheck,
-  BadgeCheck 
+  CheckCircle2,
+  AlertTriangle
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -27,143 +34,170 @@ export const GovernmentLayout = () => {
     navigate('/');
   };
 
-  const navGroups = [
-    {
-      group: "STATEWIDE INTELLIGENCE",
-      items: [
-        { to: '/government/dashboard', label: 'State Overview', icon: LayoutDashboard },
-        { to: '/government/districts', label: 'District Intelligence', icon: MapPin },
-        { to: '/government/skills', label: 'Skill Demand & Gap Matrix', icon: Zap }
-      ]
-    },
-    {
-      group: "COLLEGES & PIPELINE",
-      items: [
-        { to: '/government/colleges', label: 'College Analytics', icon: GraduationCap },
-        { to: '/government/placements', label: 'Placement Funnel', icon: BarChart3 }
-      ]
-    }
+  const navItems = [
+    { to: '/government/dashboard', label: 'Dashboard', icon: LayoutDashboard, badge: null },
+    { to: '/government/employers', label: 'Employers', icon: Building2, badge: 'Verify' },
+    { to: '/government/opportunities', label: 'Opportunities', icon: Briefcase, badge: 'Approve' },
+    { to: '/government/students', label: 'Students', icon: Users, badge: null },
+    { to: '/government/applications', label: 'Applications', icon: FileText, badge: null },
+    { to: '/government/placements', label: 'Placements', icon: BarChart3, badge: null },
+    { to: '/government/skills', label: 'Skill Gap Analytics', icon: Zap, badge: 'Critical' },
+    { to: '/government/districts', label: 'District Analytics', icon: MapPin, badge: null },
+    { to: '/government/notifications', label: 'Notifications', icon: Bell, badge: null },
+    { to: '/government/reports', label: 'Reports', icon: Download, badge: 'CSV' },
+    { to: '/government/settings', label: 'Settings', icon: Settings, badge: null },
   ];
 
   const getCurrentPageName = () => {
     const path = location.pathname;
-    if (path.includes('districts')) return 'District Intelligence';
-    if (path.includes('skills')) return 'Skill Demand & Gap Matrix';
-    if (path.includes('colleges')) return 'College Analytics';
-    if (path.includes('placements')) return 'Placement Funnel';
-    return 'State Overview';
+    if (path.includes('employers')) return 'Employer Verification Console';
+    if (path.includes('opportunities')) return 'Opportunity Approval Workflow';
+    if (path.includes('students')) return 'Student Directory & Placement Status';
+    if (path.includes('applications')) return 'Statewide Applications Monitor';
+    if (path.includes('placements')) return 'Placement Analytics & Trends';
+    if (path.includes('skills')) return 'Industry Skill Demand vs Student Availability';
+    if (path.includes('districts')) return 'Rajasthan District Employment Analytics';
+    if (path.includes('notifications')) return 'Government Announcements';
+    if (path.includes('reports')) return 'Intelligence Reports & Exports';
+    if (path.includes('settings')) return 'Governance Settings';
+    return 'Rajasthan Employment Intelligence Dashboard';
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col font-sans">
+    <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col font-sans selection:bg-amber-500 selection:text-slate-950">
       
-      {/* Spacious Top Bar */}
-      <header className="sticky top-0 z-40 bg-slate-950 border-b border-slate-800 h-16 shadow-md">
-        <div className="max-w-[1550px] mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
+      {/* Top Header */}
+      <header className="sticky top-0 z-40 bg-slate-950/95 backdrop-blur border-b border-slate-800 h-16 shadow-lg">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
           
-          {/* Left: Breadcrumb */}
+          {/* Left: Breadcrumb & Toggle */}
           <div className="flex items-center space-x-3.5">
             <button 
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 rounded-lg text-slate-400 hover:bg-slate-800"
+              className="lg:hidden p-2 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors"
+              aria-label="Toggle menu"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
-            <div className="flex items-center space-x-2.5 text-sm font-semibold text-slate-400">
-              <span className="text-amber-400 font-black text-base">Hiring Wallah</span>
-              <ChevronRight className="w-4 h-4 text-slate-600" />
-              <span className="text-white font-extrabold text-base">{getCurrentPageName()}</span>
+            <div className="flex items-center space-x-2 text-sm">
+              <span className="flex items-center space-x-1.5 text-amber-400 font-bold tracking-tight">
+                <Landmark className="w-4 h-4" />
+                <span>Govt of Rajasthan</span>
+              </span>
+              <ChevronRight className="w-4 h-4 text-slate-600 hidden sm:inline" />
+              <span className="text-slate-200 font-semibold hidden sm:inline text-xs sm:text-sm">
+                {getCurrentPageName()}
+              </span>
             </div>
           </div>
 
-          {/* Right: Dept Admin & Logout */}
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-3 text-sm">
-              <div className="w-8 h-8 rounded-lg bg-amber-500 text-slate-950 flex items-center justify-center font-bold text-sm">
+          {/* Right: Badges, Admin Profile & Logout */}
+          <div className="flex items-center space-x-3 sm:space-x-4">
+            
+            {/* Prototype Demo Data Pill */}
+            <div className="hidden md:flex items-center space-x-1.5 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs font-bold tracking-wide animate-pulse">
+              <span className="w-2 h-2 rounded-full bg-amber-400"></span>
+              <span>Prototype Demo Data</span>
+            </div>
+
+            {/* Department Badge */}
+            <div className="flex items-center space-x-3 text-sm pl-2 border-l border-slate-800">
+              <div className="w-8 h-8 rounded-lg bg-amber-500 text-slate-950 flex items-center justify-center font-black text-xs shadow-sm">
                 RJ
               </div>
-              <div className="hidden sm:block text-left">
-                <span className="font-bold text-white block leading-tight">{user?.name || 'Department Administrator'}</span>
-                <span className="text-xs text-amber-400/90 font-medium leading-none">{user?.email || 'rajgoverment@gmail.com'}</span>
+              <div className="hidden lg:block text-left">
+                <span className="font-bold text-white text-xs block leading-tight">State Nodal Officer</span>
+                <span className="text-[10px] text-amber-400 font-medium leading-none">rajgoverment@gmail.com</span>
               </div>
             </div>
 
+            {/* Logout button */}
             <button
               onClick={handleLogout}
-              className="p-2 text-slate-400 hover:text-amber-400 hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
-              title="Logout"
+              className="p-2 text-slate-400 hover:text-rose-400 hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
+              title="Sign out of Government Portal"
             >
-              <LogOut className="w-5 h-5" />
+              <LogOut className="w-4 h-4" />
             </button>
           </div>
 
         </div>
       </header>
 
-      {/* Main Container */}
-      <div className="flex-1 max-w-[1550px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col lg:flex-row gap-8">
+      {/* Main Layout Body */}
+      <div className="flex-1 max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col lg:flex-row gap-6">
         
-        {/* Enterprise Sidebar (260px width) */}
-        <aside className={`lg:w-[260px] shrink-0 ${mobileMenuOpen ? 'block' : 'hidden lg:block'}`}>
-          <div className="sticky top-24 space-y-6 bg-slate-950 p-5 rounded-2xl border border-slate-800 shadow-md">
+        {/* Responsive Government Sidebar */}
+        <aside className={`lg:w-[270px] shrink-0 ${mobileMenuOpen ? 'block' : 'hidden lg:block'}`}>
+          <div className="sticky top-22 space-y-5 bg-slate-950 p-4 rounded-2xl border border-slate-800 shadow-xl">
             
-            {/* Sidebar Branding */}
-            <div className="flex items-center space-x-3 pb-4 border-b border-slate-800">
-              <div className="w-9 h-9 rounded-xl bg-amber-500 text-slate-950 flex items-center justify-center font-black text-base">
-                HW
+            {/* Portal Banner */}
+            <div className="p-3 bg-gradient-to-r from-amber-500/10 to-transparent rounded-xl border border-amber-500/20 flex items-center space-x-3">
+              <div className="w-10 h-10 rounded-xl bg-amber-500 text-slate-950 flex items-center justify-center font-black text-lg shadow-md">
+                🏛
               </div>
               <div>
-                <span className="text-base font-black text-white block leading-tight">Hiring Wallah</span>
-                <span className="text-xs text-amber-400 uppercase font-bold">Govt Intelligence</span>
+                <span className="text-sm font-extrabold text-white block leading-tight">Government Portal</span>
+                <span className="text-[10px] text-amber-400 uppercase font-bold tracking-wider">Employment Intelligence</span>
               </div>
             </div>
 
-            {/* Nav Groups */}
-            <div className="space-y-5">
-              {navGroups.map((grp) => (
-                <div key={grp.group} className="space-y-1.5">
-                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block px-2.5 mb-1">
-                    {grp.group}
-                  </span>
-                  {grp.items.map((item) => {
-                    const Icon = item.icon;
-                    return (
-                      <NavLink
-                        key={item.to}
-                        to={item.to}
-                        onClick={() => setMobileMenuOpen(false)}
-                        className={({ isActive }) =>
-                          `flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-semibold transition-colors ${
-                            isActive
-                              ? 'bg-amber-500 text-slate-950 font-bold'
-                              : 'text-slate-400 hover:text-white hover:bg-slate-900'
-                          }`
-                        }
-                      >
-                        <Icon className="w-4 h-4 stroke-[2]" />
-                        <span>{item.label}</span>
-                      </NavLink>
-                    );
-                  })}
-                </div>
-              ))}
-            </div>
+            {/* Navigation Links */}
+            <nav className="space-y-1">
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={({ isActive }) =>
+                      `flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                        isActive
+                          ? 'bg-amber-500 text-slate-950 shadow-md font-extrabold shadow-amber-500/20 translate-x-0.5'
+                          : 'text-slate-400 hover:text-white hover:bg-slate-900'
+                      }`
+                    }
+                  >
+                    <div className="flex items-center space-x-3">
+                      <Icon className="w-4 h-4 stroke-[2.2]" />
+                      <span>{item.label}</span>
+                    </div>
 
-            {/* Official Footer Seal */}
-            <div className="pt-4 border-t border-slate-800 text-xs text-slate-400 space-y-1">
-              <span className="font-bold text-amber-400 flex items-center space-x-1.5">
-                <ShieldCheck className="w-4 h-4 text-amber-400" />
-                <span>State Directorate Console</span>
-              </span>
-              <p className="text-xs text-slate-500 leading-tight">
-                Technical Education Department, Rajasthan
-              </p>
+                    {item.badge && (
+                      <span className={`text-[9px] uppercase px-1.5 py-0.5 rounded font-black ${
+                        item.badge === 'Critical' 
+                          ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
+                          : item.badge === 'Verify' || item.badge === 'Approve'
+                          ? 'bg-amber-400/20 text-amber-300 border border-amber-400/30'
+                          : 'bg-slate-800 text-slate-400 border border-slate-700'
+                      }`}>
+                        {item.badge}
+                      </span>
+                    )}
+                  </NavLink>
+                );
+              })}
+            </nav>
+
+            {/* System Status Seal */}
+            <div className="pt-4 border-t border-slate-800/90 text-xs text-slate-400 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] text-slate-400 font-semibold">Governance Mode</span>
+                <span className="text-[10px] px-2 py-0.5 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-full font-bold">
+                  ACTIVE
+                </span>
+              </div>
+              <div className="p-2.5 bg-slate-900/90 rounded-xl border border-slate-800 text-[10px] text-slate-400 leading-relaxed">
+                <strong className="text-amber-400 block font-bold mb-0.5">Role Objective:</strong>
+                Verify + Approve + Monitor + Analyze Skill Gaps + Policy Decisions.
+              </div>
             </div>
 
           </div>
         </aside>
 
-        {/* Content Area */}
+        {/* Dynamic Page Content */}
         <main className="flex-1 min-w-0">
           <Outlet />
         </main>

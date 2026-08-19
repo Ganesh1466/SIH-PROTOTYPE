@@ -35,10 +35,17 @@ import { EmployerReports } from './pages/employer/EmployerReports';
 
 // Government Portal Pages
 import { GovernmentDashboard } from './pages/government/GovernmentDashboard';
-import { DistrictIntelligence } from './pages/government/DistrictIntelligence';
-import { SkillDemandIntelligence } from './pages/government/SkillDemandIntelligence';
-import { CollegeAnalytics } from './pages/government/CollegeAnalytics';
+import { GovernmentEmployers } from './pages/government/GovernmentEmployers';
+import { GovernmentOpportunities } from './pages/government/GovernmentOpportunities';
+import { GovernmentStudents } from './pages/government/GovernmentStudents';
+import { GovernmentApplications } from './pages/government/GovernmentApplications';
 import { PlacementAnalytics } from './pages/government/PlacementAnalytics';
+import { SkillDemandIntelligence } from './pages/government/SkillDemandIntelligence';
+import { DistrictIntelligence } from './pages/government/DistrictIntelligence';
+import { CollegeAnalytics } from './pages/government/CollegeAnalytics';
+import { GovernmentNotifications } from './pages/government/GovernmentNotifications';
+import { GovernmentReports } from './pages/government/GovernmentReports';
+import { GovernmentSettings } from './pages/government/GovernmentSettings';
 
 function App() {
   return (
@@ -123,10 +130,17 @@ function App() {
           >
             <Route index element={<Navigate to="/government/dashboard" replace />} />
             <Route path="dashboard" element={<GovernmentDashboard />} />
-            <Route path="districts" element={<DistrictIntelligence />} />
-            <Route path="skills" element={<SkillDemandIntelligence />} />
-            <Route path="colleges" element={<CollegeAnalytics />} />
+            <Route path="employers" element={<GovernmentEmployers />} />
+            <Route path="opportunities" element={<GovernmentOpportunities />} />
+            <Route path="students" element={<GovernmentStudents />} />
+            <Route path="applications" element={<GovernmentApplications />} />
             <Route path="placements" element={<PlacementAnalytics />} />
+            <Route path="skills" element={<SkillDemandIntelligence />} />
+            <Route path="districts" element={<DistrictIntelligence />} />
+            <Route path="colleges" element={<CollegeAnalytics />} />
+            <Route path="notifications" element={<GovernmentNotifications />} />
+            <Route path="reports" element={<GovernmentReports />} />
+            <Route path="settings" element={<GovernmentSettings />} />
           </Route>
 
           {/* Fallback */}
