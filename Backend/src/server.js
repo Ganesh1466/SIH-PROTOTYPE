@@ -93,24 +93,43 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// CORS ke baad routes (Order is important)
-app.use('/student', studentRoutes);
-app.use('/notifications', notificationRoutes);
-app.use('/passport', studentProfileRoutes);
-
-// Modular REST API Endpoints (/api/...)
-app.use('/api/student', studentRoutes);
+// Direct Root & /api Prefix Routing (Order is important)
+// 1. Profile / Passport Routes (Must be before /student wildcard :id)
+app.use('/student/profile', studentProfileRoutes);
 app.use('/api/student/profile', studentProfileRoutes);
-app.use('/api/students', studentRoutes);
+app.use('/passport', studentProfileRoutes);
 app.use('/api/passport', studentProfileRoutes);
-app.use('/api/employer/opportunities', opportunityRoutes);
-app.use('/api/employers', employerRoutes);
+
+// 2. Student Routes
+app.use('/student', studentRoutes);
+app.use('/students', studentRoutes);
+app.use('/api/student', studentRoutes);
+app.use('/api/students', studentRoutes);
+
+// 3. Jobs & Opportunities Routes
+app.use('/jobs', jobRoutes);
 app.use('/api/jobs', jobRoutes);
+app.use('/employer/opportunities', opportunityRoutes);
+app.use('/api/employer/opportunities', opportunityRoutes);
+app.use('/employers', employerRoutes);
+app.use('/api/employers', employerRoutes);
+
+// 4. Applications Routes
+app.use('/applications', applicationRoutes);
 app.use('/api/applications', applicationRoutes);
-app.use('/api/matching', matchingRoutes);
-app.use('/api/learning', learningRoutes);
-app.use('/api/interviews', interviewRoutes);
+
+// 5. Notifications Routes
+app.use('/notifications', notificationRoutes);
 app.use('/api/notifications', notificationRoutes);
+
+// 6. Matching, Learning, Interviews & Government Routes
+app.use('/matching', matchingRoutes);
+app.use('/api/matching', matchingRoutes);
+app.use('/learning', learningRoutes);
+app.use('/api/learning', learningRoutes);
+app.use('/interviews', interviewRoutes);
+app.use('/api/interviews', interviewRoutes);
+app.use('/government', governmentRoutes);
 app.use('/api/government', governmentRoutes);
 
 // 404 Handler
